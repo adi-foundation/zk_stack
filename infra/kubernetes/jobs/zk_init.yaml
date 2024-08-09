@@ -12,15 +12,11 @@ spec:
       - name: zksync
         image: us-central1-docker.pkg.dev/zksync-413615/zksync/zk-init:latest
         env:
-        - name: DATABASE_URL
-          value: postgres://user:pass@hostname:5432/zksync_local_test
-        - name: DATABASE_PROVER_URL
-          value: postgres://user:pass@hostname:5432/prover_local_test
-        - name: ETH_CLIENT_WEB3_URL
-          value: http://l1_rpc:8545
+        - name: BASE_TOKEN_SYMBOL
+          value: IHC
         volumeMounts:
         - name: custom-config-volume
-          mountPath: /etc/env/configs/custom
+          mountPath: /configs
       restartPolicy: Never
       volumes:
       - name: custom-config-volume
