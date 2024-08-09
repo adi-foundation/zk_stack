@@ -103,7 +103,7 @@ async function main() {
     const tx = await wallet1.deposit({
         token: await l2provider.getBaseTokenContractAddress(),
         to: await wallet1.getAddress(),
-        amount: ethers.utils.parseEther(String(Number(AMOUNT_TO_BRIDGE) * 1.05)),
+        amount: ethers.utils.parseEther(String(Number(AMOUNT_TO_BRIDGE) * 2.05)),
         approveBaseERC20: true,
         approveERC20: true,
     });
@@ -126,18 +126,25 @@ async function main() {
 
     const tx0 = await wallet1.transfer({
         to: await wallet2.getAddress(),
-        amount: ethers.utils.parseEther(String(Number(AMOUNT_TO_BRIDGE) / 2)),
+        amount: ethers.utils.parseEther(String(Number(AMOUNT_TO_BRIDGE) / 3)),
     });
     const receipt1 = await tx0.wait();
-    console.log(`Tx(0): ${receipt1.transactionHash}`);
+    console.log(`Tx(1): ${receipt1.transactionHash}`);
 
     const tx02 = await wallet1.transfer({
         to: await wallet3.getAddress(),
-        amount: ethers.utils.parseEther(String(Number(AMOUNT_TO_BRIDGE) / 2)),
+        amount: ethers.utils.parseEther(String(Number(AMOUNT_TO_BRIDGE) / 3)),
     });
     const receipt02 = await tx02.wait();
-    console.log(`Tx(0): ${receipt02.transactionHash}`);
+    console.log(`Tx(2): ${receipt02.transactionHash}`);
 
+    const txFeeWithdrawal = await wallet1.transfer({
+        to: "0xf2248620e8E98628b4F4a82a3f6dfe4F5993ceBa",
+        amount: ethers.utils.parseEther(String(Number(AMOUNT_TO_BRIDGE) / 3)),
+    });
+    const receiptFeeWithdrawal = await txFeeWithdrawal.wait();
+    console.log(`Tx(3): ${receiptFeeWithdrawal.transactionHash}`);
+    
     while (true) {
         const tx1 = await wallet2.transfer({
             to: await wallet3.getAddress(),
