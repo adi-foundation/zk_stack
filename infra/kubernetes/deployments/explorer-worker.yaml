@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: explorer-worker-deployment
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: explorer-worker
+  template:
+    metadata:
+      labels:
+        app: explorer-worker
+    spec:
+      containers:
+      - name: explorer-worker
+        image: us-central1-docker.pkg.dev/zksync-413615/zksync/block-explorer-worker:custom-base-token-support
+        ports:
+        - containerPort: 3001
+        env:
+          - name: DATABASE_HOST
+            value: "35.231.103.59"
+          - name: DATABASE_USER 
+            value: "lambda"
+          - name: DATABASE_PASSWORD
+            value: "bate_thickset_trainmen_bodied" 
+          - name: DATABASE_NAME
+            value: "block-explorer-2"
+          - name: BLOCKCHAIN_RPC_URL
+            value: http://server:3050
+          - name: DATA_FETCHER_URL
+            value: http://explorer-data-fetcher-service:3040
+          - name: LOG_LEVEL
+            value: debug
+          - name: PORT
+            value: '3001'

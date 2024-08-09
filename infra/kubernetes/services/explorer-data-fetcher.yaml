@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: explorer-data-fetcher-service
+  namespace: default
+spec:
+  selector:
+    app: explorer-data-fetcher
+  ports:
+  - protocol: TCP
+    port: 3040
+    targetPort: 3040

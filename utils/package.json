@@ -1,0 +1,13 @@
+{
+  "dependencies": {
+    "cac": "^6.7.14",
+    "ethers": "~5.7.0",
+    "pg": "^8.12.0",
+    "zksync-ethers": "5.9.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.9",
+    "@types/pg": "^8.11.6",
+    "prettier": "^3.3.2"
+  }
+}

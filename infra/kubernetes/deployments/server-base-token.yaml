@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: server-base-token-deployment
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: server
+  template:
+    metadata:
+      labels:
+        app: server
+    spec:
+      serviceAccountName: buckets-rw
+      containers:
+      - name: server
+        image: us-central1-docker.pkg.dev/zksync-413615/zksync/server-v2:v24.12.0
+        args: ["--components=api,eth,tree,state_keeper,housekeeper,commitment_generator,proof_data_handler,base_token_ratio_persister,vm_runner_bwip"]
+        ports:
+        - containerPort: 3050
+        - containerPort: 3071
+        - containerPort: 3320
+        - containerPort: 3312
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 3071
+        volumeMounts:
+        - name: consensus-config-volume
+          mountPath: /etc/env
+        envFrom:
+        - configMapRef:
+            name: env-configmap
+      volumes:
+      - name: consensus-config-volume
+        configMap:
+          name: server-consensus-config

@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: server-consensus-config
+  namespace: default
+data:
+  consensus_config.yaml: |
+    server_addr: '127.0.0.1:3054'
+    public_addr: '127.0.0.1:3054'
+    max_payload_size: 0
+    gossip_dynamic_inbound_limit: 0
+  consensus_secrets.yaml: ""

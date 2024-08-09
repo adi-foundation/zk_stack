@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: explorer-api-deployment
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: explorer-api
+  template:
+    metadata:
+      labels:
+        app: explorer-api
+    spec:
+      containers:
+      - name: explorer-api
+        image: us-central1-docker.pkg.dev/zksync-413615/zksync/block-explorer-api:custom-base-token-support
+        ports:
+        - containerPort: 3020
+        readinessProbe:
+          httpGet:
+            path: /api
+            port: 3020
+        env:
+          - name: DATABASE_URL
+            value: postgres://lambda:bate_thickset_trainmen_bodied@35.231.103.59:5432/block-explorer-2
+          - name: NETWORK_NAME
+            value: IHC-devnet
+          - name: PORT
+            value: '3020'
+          - name: BASE_TOKEN_SYMBOL
+            value: IHC
+          - name: BASE_TOKEN_DECIMALS
+            value: '18'
+          - name: BASE_TOKEN_L1_ADDRESS
+            value: "0x80d1267Eb2db40122129390DeD3ebFfd2f315e76"
+          - name: BASE_TOKEN_ICON_URL
+            value: https://assets.coingecko.com/coins/images/14534/standard/TOKEN-Gradient.png?1696514218
+          - name: BASE_TOKEN_NAME
+            value: IHC

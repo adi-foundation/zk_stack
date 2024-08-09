@@ -1,0 +1,33 @@
+__imports__ = [ "base", "l1-inits/.init.env", "l2-inits/custom.init.env" ]
+
+ETH_SENDER_SENDER_PUBDATA_SENDING_MODE = "Blobs"
+
+[chain.eth]
+network = "sepolia"
+
+[chain.state_keeper]
+fee_account_addr = ""
+
+[eth_client]
+web3_url = ""
+
+[eth_sender.sender]
+operator_private_key = ""
+operator_commit_eth_addr = ""
+
+operator_blobs_private_key = ""
+operator_blobs_eth_addr = ""
+
+proof_sending_mode = "SkipEveryProof"
+
+[misc]
+fee_account_private_key = ""
+
+[contracts]
+BASE_TOKEN_ADDR = "0x0000000000000000000000000000000000000001"
+
+[fri_prover]
+setup_data_path = "vk_setup_data_generator_server_fri/data"
+
+[fri_proof_compressor]
+universal_setup_path = "../keys/setup/setup_2^26.key"

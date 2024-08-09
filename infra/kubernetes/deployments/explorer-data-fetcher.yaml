@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: explorer-data-fetcher-deployment
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: explorer-data-fetcher
+  template:
+    metadata:
+      labels:
+        app: explorer-data-fetcher
+    spec:
+      containers:
+      - name: explorer-data-fetcher
+        image: us-central1-docker.pkg.dev/zksync-413615/zksync/block-explorer-data-fetcher:custom-base-token-support
+        ports:
+        - containerPort: 3040
+        env:
+          - name: BLOCKCHAIN_RPC_URL
+            value: http://server:3050
+          - name: PORT
+            value: '3040'
