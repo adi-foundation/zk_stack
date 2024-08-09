@@ -2,6 +2,7 @@ import { getBalance } from "./cmdGetBalance";
 import { sendBalance } from "./cmdSendBalance";
 import { depositBalance } from "./cmdDeposit";
 import { fixNonce } from "./cmdFixNonce";
+import { getRandomWallet } from "./cmdGetRandomWallet";
 
 export const cmd = {
     balance: {
@@ -11,5 +12,8 @@ export const cmd = {
     },
     maintenance: {
         fixNonce
+    },
+    utils: {
+        getRandomWallet
     }
 }

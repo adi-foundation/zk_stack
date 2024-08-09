@@ -85,6 +85,13 @@ async function main() {
             }
         );
 
+    cli.command("get-wallet [pk]", "\n\t└>Get Random Addr and PK or Get Addr if PK is passed as argument")
+        .example("get-wallet")
+        .action(
+            async (pk) => {
+                await cmd.utils.getRandomWallet(pk);
+            }
+        );
     cli.help();
     cli.parse();
 }
@@ -96,4 +103,3 @@ main()
         console.error(error);
         process.env.exitCode = "1";
     });
-
