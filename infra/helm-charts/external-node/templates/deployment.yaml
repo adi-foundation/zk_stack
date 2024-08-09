@@ -1,0 +1,91 @@
+{{- range .Values.nodename }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{.}}
+  namespace: {{$.Values.namespace}}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{.}}
+  template:
+    metadata:
+      labels:
+        app: {{.}}
+    spec:
+      {{- $fullUrl := printf "%s/%s" $.Values.deployment.env.DATABASE_URL . -}}
+      {{- $parsedUrl := (urlParse $fullUrl) -}}
+      {{- $parsedHost := (regexSplit ":" $parsedUrl.host -1) -}}
+      {{- $parsedCredentials := (regexSplit ":" $parsedUrl.userinfo -1) -}}
+
+      {{- if eq $parsedUrl.scheme "postgres" }}
+      {{- else }}
+        {{- fail (printf "Invalid: %s" $fullUrl) }}
+      {{- end }}
+
+      initContainers:
+      - name: {{.}}-drop-db
+        image: postgres:14
+        env:
+        - name: PGUSER
+          value: {{index $parsedCredentials 0}}
+        - name: PGPASSWORD
+          value: {{index $parsedCredentials 1}}
+        - name: POSTGRES_DB
+          value: {{$parsedUrl.path | trimAll "/"}}
+        - name: PGHOST
+          value: {{index $parsedHost 0}}
+        - name: PGPORT
+          value: "{{index $parsedHost 1}}"
+        - name: MAIN_DB
+          value: {{$parsedUrl.scheme}}
+        command: ["sh", "-c", "psql -d $MAIN_DB -c \"DROP DATABASE IF EXISTS \\\"$POSTGRES_DB\\\";\" "]
+
+      containers:
+        - name: {{.}}
+          image: matterlabs/external-node:v24.7.0-alpha-linux-amd64
+          ports:
+            - containerPort: 3050
+            - containerPort: 3051
+            - containerPort: 3071
+            - containerPort: 3312
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 3071
+          env:
+            - name: EN_HTTP_PORT
+              value: "3050"
+            - name: EN_WS_PORT
+              value: "3051"
+            - name: EN_HEALTHCHECK_PORT
+              value: "3071"
+            - name: EN_PROMETHEUS_PORT
+              value: "3312"
+            - name: DATABASE_URL
+              value: "{{$.Values.deployment.env.DATABASE_URL}}/{{.}}"
+            - name: DATABASE_POOL_SIZE
+              value: "10"
+            - name: EN_ETH_CLIENT_URL
+              value: {{$.Values.deployment.env.EN_ETH_CLIENT_URL}}
+            - name: EN_MAIN_NODE_URL
+              value: {{$.Values.deployment.env.EN_MAIN_NODE_URL}}
+            - name: EN_L1_CHAIN_ID
+              value: "{{$.Values.deployment.env.EN_L1_CHAIN_ID}}"
+            - name: EN_L2_CHAIN_ID
+              value: "{{$.Values.deployment.env.EN_L2_CHAIN_ID}}"
+            - name: EN_STATE_CACHE_PATH
+              value: "./db/ext-node/state_keeper"
+            - name: EN_MERKLE_TREE_PATH
+              value: "./db/ext-node/lightweight"
+            - name: EN_SNAPSHOTS_RECOVERY_ENABLED
+              value: "true"
+            - name: EN_SNAPSHOTS_OBJECT_STORE_BUCKET_BASE_URL
+              value: {{$.Values.deployment.env.EN_SNAPSHOTS_OBJECT_STORE_BUCKET_BASE_URL}}
+            - name: EN_SNAPSHOTS_OBJECT_STORE_MODE
+              value: "GCSAnonymousReadOnly"
+            - name: RUST_LOG
+              value: "warn,zksync=info,zksync_core::metadata_calculator=debug,zksync_state=debug,zksync_utils=debug,zksync_web3_decl::client=error"
+---
+{{- end }}

@@ -1,0 +1,29 @@
+{{- range .Values.nodename }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{.}}-service
+  namespace: {{$.Values.namespace}}
+  annotations:
+    cloud.google.com/backend-config: '{"default": "{{.}}-hc-config"}'
+  labels:
+    app: {{.}}
+spec:
+  type: NodePort
+  ports:
+    - port: 3050
+      name: {{.}}-http
+      targetPort: 3050
+      protocol: TCP
+    - port: 3071
+      name: {{.}}-healthcheck
+      targetPort: 3071
+      protocol: TCP
+    - port: 3312
+      name: {{.}}-prometheus
+      targetPort: 3312
+      protocol: TCP
+  selector:
+    app: {{.}}
+---
+{{- end }}
