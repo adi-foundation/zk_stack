@@ -12,7 +12,8 @@ RUN apt-get update && \
     curl \
     docker.io \
     vim \
-    gnupg && \
+    gnupg  \
+    postgresql && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
