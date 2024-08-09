@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: compressor-deployment
+  namespace: default
+  labels:
+    app: compressor
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: compressor
+  template:
+    metadata:
+      labels:
+        app: compressor
+    spec:
+      serviceAccountName: buckets-rw
+      containers:
+      - name: compressor
+        image: us-central1-docker.pkg.dev/zksync-413615/zksync/proof-fri-gpu-compressor:0.24.2-v16.1.0
+        envFrom:
+          - configMapRef:
+              name: env-configmap
+        resources:
+          limits:
+            nvidia.com/gpu: 1
+      nodeSelector:
+        gpu-node-pool: "true"
+      tolerations:
+        - key: "nvidia.com/gpu"
+          value: "present"
+          effect: "NoSchedule"

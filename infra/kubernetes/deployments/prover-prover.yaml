@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prover-gpu-fri-deployment
+  namespace: default
+  labels:
+    app: prover-gpu-fri
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prover-gpu-fri
+  template:
+    metadata:
+      labels:
+        app: prover-gpu-fri
+    spec:
+      serviceAccountName: buckets-rw
+      initContainers:
+      - name: prover-setup
+        image: us-central1-docker.pkg.dev/zksync-413615/zksync/prover-setup:latest
+        volumeMounts:
+        - name: trusted-setup-volume
+          mountPath: /setup_data
+          subPath: data
+      containers:
+      - name: prover-gpu-fri
+        image: us-central1-docker.pkg.dev/zksync-413615/zksync/prover-gpu-fri:0.24.2-v16.1.0
+        envFrom:
+          - configMapRef:
+              name: env-configmap
+        volumeMounts:
+        - name: trusted-setup-volume
+          mountPath: /prover/vk_setup_data_generator_server_fri/data
+          subPath: data
+        resources:
+          limits:
+            nvidia.com/gpu: 1
+      volumes:
+      - name: trusted-setup-volume
+        persistentVolumeClaim:
+          claimName: trusted-setup-pvc
+      nodeSelector:
+        gpu-node-pool: "true"
+      tolerations:
+        - key: "nvidia.com/gpu"
+          value: "present"
+          effect: "NoSchedule"

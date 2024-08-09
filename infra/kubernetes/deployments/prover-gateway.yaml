@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prover-gateway-deployment
+  namespace: default
+  labels:
+    app: prover-gateway
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prover-gateway
+  template:
+    metadata:
+      labels:
+        app: prover-gateway
+    spec:
+      serviceAccountName: buckets-rw
+      containers:
+      - name: prover-gateway
+        image: us-central1-docker.pkg.dev/zksync-413615/zksync/prover-fri-gateway:0.24.2-v16.1.0
+        ports:
+          # Prometheus listener port.
+          # FIXME: The value of the containerPort is in the zk-stack.env file.
+          # We're hardcoding its default value.
+          - containerPort: 3314
+        envFrom:
+          - configMapRef:
+              name: env-configmap

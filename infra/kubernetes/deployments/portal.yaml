@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: portal-deployment
+  namespace: default
+  labels:
+    app: portal
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: portal
+  template:
+    metadata:
+      labels:
+        app: portal
+    spec:
+      containers:
+      - name: portal
+        image: us-central1-docker.pkg.dev/zksync-413615/zksync/portal:ihc-testnet-v0.0.2
+        ports:
+        - containerPort: 3000
+        env:
+          - name: WALLET_CONNECT_PROJECT_ID
+            value: aa203ce28e88bca1eaeb5a2a206248c
+          - name: ANKR_TOKEN
+            value: e9ae4ac7d02e23aa9d844fd02f5df570c1ebb0bdc72196c2858364d7e0a7c35a

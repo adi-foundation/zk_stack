@@ -1,0 +1,46 @@
+diff --git a/scripts/setup-hyperchain-config.ts b/scripts/setup-hyperchain-config.ts
+index 56652b485..ebfbc2b68 100644
+--- a/scripts/setup-hyperchain-config.ts
++++ b/scripts/setup-hyperchain-config.ts
+@@ -6,7 +6,7 @@ import { parse as parseConnectionString } from "pg-connection-string";
+
+ const buildAppConfig = (zkSyncEnvs: { [key: string]: string }) => ({
+   networks: [{
+-    apiUrl: "http://localhost:3020",
++    apiUrl: process.env.API_URL || "http://localhost:3020",
+     verificationApiUrl: zkSyncEnvs.API_CONTRACT_VERIFICATION_URL || "",
+     hostnames: ["localhost"],
+     icon: "/images/icons/zksync-arrows.svg",
+diff --git a/packages/app/vite.config.ts b/packages/app/vite.config.ts
+index c0b4aea25..1b5f02528 100644
+--- a/packages/app/vite.config.ts
++++ b/packages/app/vite.config.ts
+@@ -6,6 +6,7 @@ import { fileURLToPath, URL } from "url";
+ // https://vitejs.dev/config/
+ export default defineConfig({
+   server: {
++    host: '0.0.0.0',
+     port: 3010,
+   },
+   build: {
+diff --git a/package.json b/package.json
+index 0fb2e53ab..3498022d2 100644
+--- a/package.json
++++ b/package.json
+@@ -19,6 +19,7 @@
+     "dev": "lerna run dev",
+     "build": "lerna run build",
+     "start": "lerna run start",
++    "maintenance": "serve -p 3010 maintenance/",
+     "db:create": "lerna run db:create",
+     "db:drop": "lerna run db:drop",
+     "hyperchain:configure": "ts-node scripts/setup-hyperchain-config"
+@@ -47,5 +48,8 @@
+   "engines": {
+     "npm": ">=9.0.0",
+     "node": ">=18.0.0"
++  },
++  "dependencies": {
++    "serve": "14.2.3"
+   }
+ }

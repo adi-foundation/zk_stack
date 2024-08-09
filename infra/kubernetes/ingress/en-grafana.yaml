@@ -1,0 +1,26 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: en01-grafana
+  namespace: default
+  annotations:
+    kubernetes.io/ingress.global-static-ip-name: en01-grafana-ip
+    cert-manager.io/issuer: http01-issuer
+    acme.cert-manager.io/http01-edit-in-place: "true"
+  labels:
+    app: en01-grafana
+spec:
+  rules:
+    - host: k8s.en01.grafana.sepolia.zk-stack.lambdaclass.com
+      http:
+        paths:
+          - pathType: ImplementationSpecific
+            backend:
+              service:
+                name: en01-grafana
+                port:
+                  number: 3000
+  tls:
+    - hosts:
+        - k8s.en01.grafana.sepolia.zk-stack.lambdaclass.com
+      secretName: en01-grafana-ingress-cert

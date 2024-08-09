@@ -1,0 +1,26 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: explorer-app
+  namespace: default
+  annotations:
+    kubernetes.io/ingress.global-static-ip-name: explorer-app-ip
+    cert-manager.io/issuer: http01-issuer
+    acme.cert-manager.io/http01-edit-in-place: "true"
+  labels:
+    app: explorer-app
+spec:
+  rules:
+    - host: k8s.explorer.sepolia.zk-stack.lambdaclass.com
+      http:
+        paths:
+        - pathType: ImplementationSpecific
+          backend:
+            service:
+              name: explorer-app
+              port:
+                number: 3010
+  tls:
+    - hosts:
+      - k8s.explorer.sepolia.zk-stack.lambdaclass.com
+      secretName: explorer-app-ingress-cert

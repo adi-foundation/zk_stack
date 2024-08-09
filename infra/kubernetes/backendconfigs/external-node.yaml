@@ -1,0 +1,11 @@
+apiVersion: cloud.google.com/v1
+kind: BackendConfig
+metadata:
+  name: external-node-hc-config
+  namespace: default
+spec:
+  healthCheck:
+    checkIntervalSec: 15
+    port: 3071
+    type: HTTP
+    requestPath: /health
