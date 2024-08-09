@@ -1,0 +1,17 @@
+{
+  "name": "vesting_wallet_demo",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "@openzeppelin/contracts": "^5.0.2",
+    "@safe-global/api-kit": "^2.4.3",
+    "@safe-global/protocol-kit": "^4.0.3",
+    "@safe-global/safe-core-sdk-types": "^5.0.3",
+    "commander": "^12.1.0",
+    "ethers": "^6.13.2"
+  },
+  "scripts": {
+    "safe": "bun src/safe.ts"
+  }
+}
