@@ -1,0 +1,28 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: zk-init-job
+  namespace: default
+spec:
+  completions: 1
+  template:
+    spec:
+      serviceAccountName: configmaps-w
+      containers:
+      - name: zksync
+        image: us-central1-docker.pkg.dev/zksync-413615/zksync/zk-init:latest
+        env:
+        - name: DATABASE_URL
+          value: postgres://user:pass@hostname:5432/zksync_local_test
+        - name: DATABASE_PROVER_URL
+          value: postgres://user:pass@hostname:5432/prover_local_test
+        - name: ETH_CLIENT_WEB3_URL
+          value: http://l1_rpc:8545
+        volumeMounts:
+        - name: custom-config-volume
+          mountPath: /etc/env/configs/custom
+      restartPolicy: Never
+      volumes:
+      - name: custom-config-volume
+        configMap:
+          name: zk-init-configmap

@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: zk-init-configmap
+  namespace: default
+data:
+  custom.toml: |
+    __imports__ = [ "base", "l1-inits/.init.env", "l2-inits/custom.init.env" ]
+
+    ETH_SENDER_SENDER_PUBDATA_SENDING_MODE = "Blobs"
+
+    [contracts]
+    BASE_TOKEN_ADDR = "0x0000000000000000000000000000000000000001"
+
+    [contract_verifier]
+    url = "http://server:3070"
+
+    [api.web3_json_rpc]
+    http_url = "http://server:3050"
+    ws_url = "ws://server:3051"
+
+    [api.prometheus]
+    pushgateway_url = "http://pushgateway:9091"
+
+    [fri_prover_gateway]
+    api_url="http://server:3320"
+    prometheus_pushgateway_url = "http://pushgateway:9091"
+
+    [fri_witness_vector_generator]
+    prometheus_pushgateway_url = "http://pushgateway:9091"
