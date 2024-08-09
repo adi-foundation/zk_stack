@@ -1,0 +1,22 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: snapshots-creator
+  namespace: default
+spec:
+  schedule: "* */12 * * *"
+  successfulJobsHistoryLimit: 5
+  failedJobsHistoryLimit: 10
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          serviceAccountName: buckets-rw
+          containers:
+            - name: snapshots-creator
+              image: us-central1-docker.pkg.dev/zksync-413615/zksync/snapshots-creator:18.07.24.266d9272cedc
+              imagePullPolicy: IfNotPresent
+              envFrom:
+                - configMapRef:
+                    name: env-configmap
+          restartPolicy: OnFailure

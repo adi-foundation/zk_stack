@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: witness-vector-generator-deployment
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: witness-vector-generator
+  template:
+    metadata:
+      labels:
+        app: witness-vector-generator
+    spec:
+      serviceAccountName: buckets-rw
+      containers:
+      - name: witness-vector-generator
+        image: us-central1-docker.pkg.dev/zksync-413615/zksync/witness-vector-generator:0.24.2-v16.1.0
+        ports:
+        - containerPort: 3116
+        env:
+        - name: FRI_WITNESS_VECTOR_GENERATOR_PROMETHEUS_LISTENER_PORT
+          value: '3116'
+        envFrom:
+          - configMapRef:
+              name: env-configmap

@@ -1,0 +1,21 @@
+{
+  "networks": [
+    {
+      "apiUrl": "https://k8s.explorer.api.sepolia.zk-stack.lambdaclass.com",
+      "verificationApiUrl": "",
+      "bridgeUrl": "https://k8s.portal.sepolia.zk-stack.lambdaclass.com",
+      "hostnames": [
+        "https://k8s.explorer.sepolia.zk-stack.lambdaclass.com"
+      ],
+      "icon": "/images/icons/zksync-arrows.svg",
+      "l1ExplorerUrl": "https://sepolia.etherscan.io",
+      "l2ChainId": 273,
+      "l2NetworkName": "IHC Testnet",
+      "maintenance": false,
+      "name": "IHC Testnet",
+      "published": true,
+      "rpcUrl": "https://k8s.rpc.sepolia.zk-stack.lambdaclass.com",
+      "baseTokenAddress": "0x000000000000000000000000000000000000800A"
+    }
+  ]
+}

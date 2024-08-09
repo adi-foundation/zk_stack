@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: external-node
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: external-node
+  template:
+    metadata:
+      labels:
+        app: external-node
+    spec:
+      containers:
+        - name: external-node
+          image: matterlabs/external-node:v24.7.0-alpha-linux-amd64
+          ports:
+            - containerPort: 3050
+            - containerPort: 3051
+            - containerPort: 3071
+            - containerPort: 3312
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 3071
+          env:
+            - name: EN_HTTP_PORT
+              value: "3050"
+            - name: EN_WS_PORT
+              value: "3051"
+            - name: EN_HEALTHCHECK_PORT
+              value: "3071"
+            - name: EN_PROMETHEUS_PORT
+              value: "3312"
+            - name: DATABASE_URL
+              value: postgres://lambda:ferret_red_ant_crazy_emerald@35.185.58.156:5432/external-node-01
+            - name: DATABASE_POOL_SIZE
+              value: "10"
+            - name: EN_ETH_CLIENT_URL
+              value: https://ethereum-sepolia-rpc.publicnode.com
+            - name: EN_MAIN_NODE_URL
+              value: http://k8s.rpc.sepolia.zk-stack.lambdaclass.com
+            - name: EN_L1_CHAIN_ID
+              value: "11155111"
+            - name: EN_L2_CHAIN_ID
+              value: "270"
+            - name: EN_STATE_CACHE_PATH
+              value: "./db/ext-node/state_keeper"
+            - name: EN_MERKLE_TREE_PATH
+              value: "./db/ext-node/lightweight"
+            - name: EN_SNAPSHOTS_RECOVERY_ENABLED
+              value: "true"
+            - name: EN_SNAPSHOTS_OBJECT_STORE_BUCKET_BASE_URL
+              value: "snapshots-object-store-dev"
+            - name: EN_SNAPSHOTS_OBJECT_STORE_MODE
+              value: "GCSAnonymousReadOnly"
+            - name: RUST_LOG
+              value: "warn,zksync=info,zksync_core::metadata_calculator=debug,zksync_state=debug,zksync_utils=debug,zksync_web3_decl::client=error"

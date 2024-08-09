@@ -1,0 +1,8 @@
+/portal/
+/explorer/
+/zksync-era-server/
+/zksync-era-prover/
+/bellman-cuda/
+
+/config.json
+/custom_configs/

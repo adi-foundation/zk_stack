@@ -1,0 +1,46 @@
+name: Generate Terraform Docs
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main branch
+        uses: actions/checkout@v3
+
+      - name: Render Terraform docs
+        uses: terraform-docs/gh-actions@v1.2.0
+        with:
+          working-dir: infra/terraform
+          output-file: README.md
+          recursive: true
+          recursive-path: modules
+          args: --recursive-include-main=false
+          output-method: inject
+          git-push: "false" # Set to false to avoid pushing changes directly
+
+      - name: Check for changes
+        id: check_changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          echo "changes=false" >> $GITHUB_ENV
+          git diff --staged --exit-code || echo "changes=true" >> $GITHUB_ENV
+
+      - name: Debug changes variable
+        run: |
+          echo "Changes variable: ${{ env.changes }}"
+
+      - name: Create Pull Request
+        if: env.changes == 'true'
+        uses: peter-evans/create-pull-request@v3
+        with:
+          title: "Update Terraform Documentation"
+          body: "This PR updates the Terraform documentation."
+          head: ${{ github.sha }}
+          base: main
+          draft: false

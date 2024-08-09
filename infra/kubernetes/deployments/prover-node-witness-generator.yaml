@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: node-witness-generator-deployment
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: node-witness-generator
+  template:
+    metadata:
+      labels:
+        app: node-witness-generator
+    spec:
+      serviceAccountName: buckets-rw
+      containers:
+      - name: node-witness-generator
+        image: us-central1-docker.pkg.dev/zksync-413615/zksync/witness-generator:0.24.2-v16.1.0
+        args: ["--round=node_aggregation"]
+        ports:
+        - containerPort: 3118
+        env:
+        - name: API_PROMETHEUS_LISTENER_PORT
+          value: '3118'
+        envFrom:
+          - configMapRef:
+              name: env-configmap

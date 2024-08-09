@@ -1,0 +1,102 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grafana-deployment
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: grafana
+  template:
+    metadata:
+      labels:
+        app: grafana
+    spec:
+      initContainers:
+      - name: grafana-setup
+        image: us-central1-docker.pkg.dev/zksync-413615/zksync/grafana-setup:latest
+        volumeMounts:
+        - name: grafana-volume
+          mountPath: /grafana
+      containers:
+      - name: grafana
+        image: grafana/grafana:11.0.0
+        ports:
+        - containerPort: 3000
+        env:
+        - name: GF_SECURITY_ADMIN_USER
+          value: admin
+        - name: GF_SECURITY_ADMIN_PASSWORD
+          value: admin
+        - name: GF_USERS_ALLOW_SIGN_UP
+          value: 'false'
+        volumeMounts:
+        - name: grafana-volume
+          mountPath: /etc/grafana/provisioning/dashboards
+          subPath: grafana/dashboards
+        - name: grafana-volume
+          mountPath: /etc/grafana/provisioning/datasources
+          subPath: grafana/datasources
+        readinessProbe:
+          httpGet:
+            port: 3000
+            path: /healthz
+      - name: prometheus
+        image: prom/prometheus:v2.52.0
+        args:
+        - '--config.file=/etc/prometheus/prometheus.yml'
+        - '--storage.tsdb.path=/prometheus'
+        - '--web.console.libraries=/etc/prometheus/console_libraries'
+        - '--web.console.templates=/etc/prometheus/consoles'
+        - '--storage.tsdb.retention.time=200h'
+        - '--web.enable-lifecycle'
+        ports:
+        - containerPort: 9090
+        volumeMounts:
+        - name: grafana-volume
+          mountPath: /etc/prometheus
+          subPath: prometheus
+      - name: pushgateway
+        image: prom/pushgateway:v1.9.0
+        ports:
+        - containerPort: 9091
+      - name: nodeexporter
+        image: prom/node-exporter:v1.8.1
+        args:
+        - '--path.procfs=/host/proc'
+        - '--path.rootfs=/rootfs'
+        - '--path.sysfs=/host/sys'
+        - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+        ports:
+        - containerPort: 9100
+        volumeMounts:
+        - name: host-volume
+          mountPath: /rootfs
+          readOnly: true
+        - name: host-volume
+          mountPath: /host/sys
+          subPath: sys
+          readOnly: true
+        - name: host-volume
+          mountPath: /host/proc
+          subPath: proc
+          readOnly: true
+      - name: alertmanager
+        image: prom/alertmanager:v0.27.0
+        args:
+        - '--config.file=/etc/alertmanager/config.yml'
+        - '--storage.path=/alertmanager'
+        ports:
+        - containerPort: 9093
+        volumeMounts:
+        - name: grafana-volume
+          mountPath: /etc/alertmanager
+          subPath: alertmanager
+      volumes:
+      - name: grafana-volume
+        persistentVolumeClaim:
+          claimName: grafana-pvc
+      - name: host-volume
+        hostPath:
+          path: /

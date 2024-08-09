@@ -1,0 +1,34 @@
+[
+    {
+        "network": {
+            "id": 273,
+            "name": "IHC Testnet",
+            "key": "IHC Testnet",
+            "rpcUrl": "https://k8s.rpc.sepolia.zk-stack.lambdaclass.com",
+            "blockExplorerUrl": "https://k8s.explorer.sepolia.zk-stack.lambdaclass.com",
+            "blockExplorerApi": "https://k8s.explorer.api.sepolia.zk-stack.lambdaclass.com",
+            "l1Network": {
+                "id": 11155111,
+                "name": "Sepolia",
+                "network": "Sepolia",
+                "nativeCurrency": {
+                    "name": "Ether",
+                    "symbol": "ETH",
+                    "decimals": 18
+                },
+                "rpcUrls": {
+                    "default": {
+                        "http": [
+                            "https://sepolia.internal.lambdaclass.com/"
+                        ]
+                    },
+                    "public": {
+                        "http": [
+                            "https://sepolia.internal.lambdaclass.com/"
+                        ]
+                    }
+                }
+            }
+        }
+    }
+]
