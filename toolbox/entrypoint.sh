@@ -9,7 +9,7 @@ zk_inception ecosystem create \
     --wallet-creation in-file \
     --wallet-path /root/custom-wallets.yaml \
     --l1-batch-commit-data-generator-mode rollup \
-    --base-token-address 0x50244ccEd795263167e9EEC0DF49e4c26EFD7DD8 \
+    --base-token-address 0xd0580192E98eA6CEB9c7b6191Ed2E27560911697 \
     --base-token-price-nominator 1 \
     --base-token-price-denominator 10 \
     --start-containers false \
@@ -28,4 +28,4 @@ zk_inception ecosystem init \
     --deploy-erc20 false \
     --deploy-ecosystem true \
     --verbose \
-    --l1-rpc-url ""https://rpc.sepolia.org"" || { echo "Failed to init the ecosystem"; exit 1; }
+    --l1-rpc-url "https://rpc.sepolia.org" || { echo "Failed to init the ecosystem"; exit 1; }
