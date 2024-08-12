@@ -26,7 +26,7 @@ else
 	fi
 	BASE_TOKEN_DECIMALS=${BASE_TOKEN_DECIMALS:-18}
 	BASE_TOKEN_NAME=${BASE_TOKEN_NAME:-$BASE_TOKEN_SYMBOL}
-	L1_NAME=$(grep '^network[ ]*=' ${ZKSYNC_HOME}/etc/env/base/chain.toml | sed -E 's/^network[ ]*=[ "]*([^"]*)"*/\1/' || echo "localhost")
+	L1_NAME=$(grep '^network[ ]*=' ${ZKSYNC_HOME}/etc/env/configs/${ZKSYNC_ENV}.toml | sed -E 's/^network[ ]*=[ "]*([^"]*)"*/\1/' || echo "localhost")
 
 	ls ${ZKSYNC_HOME}/etc/tokens/${L1_NAME}.json >/dev/null 2>&1 || echo "[]" > ${ZKSYNC_HOME}/etc/tokens/${L1_NAME}.json
 	jq '. |= . + [{
