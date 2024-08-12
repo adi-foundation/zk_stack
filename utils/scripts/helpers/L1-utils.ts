@@ -1,12 +1,12 @@
 import { Wallet } from "zksync-ethers";
 import * as ethers from "ethers";
 
-export const getERC20Balance = async (
+export async function getERC20Balance(
     address: string,
     ERC20_L1: ethers.ethers.Contract,
     ERC20_DECIMALS_MUL: number,
     ERC20_SYMBOL: string
-) => {
+) {
     return await ERC20_L1.balanceOf(address)
         .then((balance: number) => {
             console.log(
@@ -20,13 +20,13 @@ export const getERC20Balance = async (
         });
 };
 
-export const l1ERC20Transfer = async (
+export async function l1ERC20Transfer(
     ethwallet: ethers.Wallet,
     nonce: number,
     amount: string | number,
     address: string,
     ERC20_L1: ethers.ethers.Contract
-) => {
+) {
     const parsedAmount = typeof amount == "number" ? amount.toString() : amount;
     const data = ERC20_L1.interface.encodeFunctionData("transfer", [
         address,

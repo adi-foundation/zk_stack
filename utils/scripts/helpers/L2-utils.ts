@@ -1,26 +1,52 @@
 import { Wallet } from "zksync-ethers";
 import * as ethers from "ethers";
+import { IERC1271, IERC20 } from "zksync-ethers/build/utils";
 
-export const l1ToL2ERC20Deposit = async (
+export async function l1ToL2ERC20Deposit(
     zkWallet: Wallet,
     nonce: number,
     token: string,
-    amount: string | number
-) => {
-    const parsedAmount = typeof amount == "number" ? amount.toString() : amount;
+    amount: string
+) {
+    // Check Allowance [wip]
+    const ERC20_L1 = new ethers.Contract(token, IERC20, zkWallet);
+    let allowance = ERC20_L1.allowance(token, zkWallet.address)
+        .then(async (allowance) => {
+            return allowance;
+        })
+        .catch((_error) => {
+            return 0;
+        });
+
+    if (allowance <= amount) {
+        const approveTx = await ERC20_L1.approve(zkWallet.address, ethers.utils.parseEther(String(Number(amount) * 1.05)));
+        await approveTx.wait();
+    }
+
+    allowance = ERC20_L1.allowance(token, zkWallet.address)
+        .then(async (allowance) => {
+            return allowance;
+        })
+        .catch((_error) => {
+            return 0;
+        });
+
+    console.log(`Current allowance: ${ethers.utils.formatEther(allowance)}`);
+    // --------------------------------
+
     const txEstimate = await zkWallet.getDepositTx({
         token,
         to: zkWallet.address,
-        amount: ethers.utils.parseEther(parsedAmount),
+        amount: ethers.utils.parseEther(amount)
     });
-    const limit = await zkWallet.provider.estimateGas(txEstimate);
+    const limit = await zkWallet.estimateGasDeposit(txEstimate);
     // TODO: maybe it is not necessary to multiply the gasLimit in order to have some headroom
     console.log(`[TODO: FIX gasLimit calculations`);
     const gasLimit = Math.ceil(limit.toNumber() * 1.2);
     return zkWallet
         .deposit({
             token,
-            amount: ethers.utils.parseEther(parsedAmount).sub(gasLimit),
+            amount: ethers.utils.parseEther(amount).sub(gasLimit),
             approveERC20: true,
             approveBaseERC20: true,
             overrides: {
