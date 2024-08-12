@@ -1,18 +1,16 @@
-import { Wallet, Provider, utils } from "zksync-ethers";
-import { IERC20 } from "zksync-ethers/build/utils";
+import { Wallet, Provider } from "zksync-ethers";
 
 import * as ethers from "ethers";
 import { env } from "process";
 import contractAbi from "./erc20_abi.json";
-import { TransactionResponse } from "zksync-ethers/build/types";
+import { helpers } from "./helpers";
 
 // HTTP RPC endpoints
 const L1_RPC_ENDPOINT = env.L1_RPC_URL || "http://127.0.0.1:8545";
 const L2_RPC_ENDPOINT = env.L2_RPC_URL || "http://127.0.0.1:3050";
 
-const AMOUNT_TO_PASS = env.AMOUNT_TO_PASS || "0.1";
 const AMOUNT_TO_BRIDGE = env.AMOUNT_TO_BRIDGE || "100";
-const AMOUNT_OF_WALLETS = 5;
+const AMOUNT_OF_WALLETS = 1;
 
 const L1_RICH_PK =
     env.L1_RICH_PK ||
@@ -23,172 +21,11 @@ const L1_RICH = {
     pk: L1_RICH_PK,
 };
 
-const getERC20Balance = async (
-    address: string,
-    ERC20_L1: ethers.ethers.Contract,
-    ERC20_DECIMALS_MUL: number,
-    ERC20_SYMBOL: string
-) => {
-    return await ERC20_L1.balanceOf(address)
-        .then((balance: number) => {
-            console.log(
-                `L1 ERC20 Balance: ${balance / ERC20_DECIMALS_MUL} ${ERC20_SYMBOL}`
-            );
-            return balance / ERC20_DECIMALS_MUL;
-        })
-        .catch(() => {
-            console.error("Error fetching ERC20 balance from L1");
-            return 0;
-        });
-};
-
-const l2BaseTokenDeposit = async (
-    zkwallet: Wallet,
-    token: string,
-    amount: string | number
-) => {
-    const parsedAmount = typeof amount == "number" ? amount.toString() : amount;
-    const txEstimate = await zkwallet.getDepositTx({
-        token,
-        amount: ethers.utils.parseEther(parsedAmount),
-    });
-    const limit = await zkwallet.provider.estimateGas(txEstimate);
-    // TODO: maybe it is not necessary to multiply the gasLimit in order to have some headroom
-    console.log(`[TODO: FIX gasLimit calculations`);
-    const gasLimit = Math.ceil(limit.toNumber() * 1.2);
-    const tx = await zkwallet.deposit({
-        token,
-        amount: ethers.utils.parseEther(parsedAmount).sub(gasLimit),
-        approveERC20: true,
-        approveBaseERC20: true,
-        overrides: {
-            gasLimit,
-        },
-    });
-    const receipt = await tx.wait();
-    console.log(`Tx: ${receipt.transactionHash}`);
-
-    console.log("\n#####################################################\n");
-    console.log(
-        `L2 balance after deposit: ${ethers.utils.formatEther(await zkwallet.getBalance())}`
-    );
-    console.log("\n#####################################################\n");
-};
-
-const l1ERC20Transfer = async (
-    ethwallet: ethers.Wallet,
-    nonce: number,
-    amount: string | number,
-    address: string,
-    ERC20_L1: ethers.ethers.Contract,
-) => {
-    const parsedAmount = typeof amount == "number" ? amount.toString() : amount;
-    const data = ERC20_L1.interface.encodeFunctionData("transfer", [
-        address,
-        ethers.utils.parseEther(parsedAmount),
-    ]);
-    const limit = await ethwallet.provider.estimateGas({
-        to: ERC20_L1.address,
-        from: ethwallet.address,
-        nonce,
-        data: data,
-    });
-    const gasLimit = Math.ceil(limit.toNumber() * 1.2);
-
-    return ethwallet
-        .sendTransaction({
-            to: ERC20_L1.address,
-            from: ethwallet.address,
-            nonce,
-            data: data,
-            gasLimit,
-        })
-        .then(async (response) => {
-            const receipt = await response.wait();
-            console.log("#####################################################");
-            console.log(`Wallet: ${address}\nTx hash: ${receipt.transactionHash}`);
-            console.log("#####################################################");
-            return response;
-        })
-        .catch((error) => {
-            throw error;
-        });
-};
-
-async function sendMultipleL1ERC20Transfers(
-    walletEthers: ethers.Wallet,
-    wallets: Wallet[],
-    amountForEach: string | number,
-    ERC20_L1: ethers.Contract,
-) {
-    const amount =
-        typeof amountForEach == "number" ? amountForEach.toString() : amountForEach;
-    const transactionPromises: Promise<ethers.providers.TransactionResponse>[] = [];
-    let nonce = await walletEthers.provider.getTransactionCount(
-        walletEthers.address,
-        "latest"
-    );
-    for (const w of wallets) {
-        const transactionPromise = l1ERC20Transfer(
-            walletEthers,
-            nonce++,
-            amount,
-            w.address,
-            ERC20_L1,
-        );
-        transactionPromises.push(transactionPromise);
-    }
-    await Promise.all(transactionPromises);
-}
-
-async function sendMultipleL1ETHTransfers(
-    walletEthers: ethers.Wallet,
-    wallets: Wallet[],
-    amountForEach: string | number
-) {
-    const amount =
-        typeof amountForEach == "number" ? amountForEach.toString() : amountForEach;
-    let nonce = await walletEthers.provider.getTransactionCount(
-        walletEthers.address,
-        "latest"
-    );
-    const transactionPromises: Promise<ethers.providers.TransactionResponse>[] =
-        [];
-
-    for (const w of wallets) {
-        const tx = {
-            to: w.address,
-            nonce: nonce++,
-            value: ethers.utils.parseEther(amount),
-            gasLimit: 21000,
-            gasPrice: await walletEthers.provider.getGasPrice(),
-        };
-
-        const transactionPromise = walletEthers
-            .sendTransaction(tx)
-            .then(async (response) => {
-                const receipt = await response.wait();
-                console.log("#####################################################");
-                console.log(
-                    `Wallet: ${w.address}\nTx hash: ${receipt.transactionHash}`
-                );
-                console.log("#####################################################");
-                return response;
-            })
-            .catch((error) => {
-                throw error;
-            });
-
-        transactionPromises.push(transactionPromise);
-    }
-    await Promise.all(transactionPromises);
-}
-
 async function main() {
     // Initialize the rich wallet, ERC20 contract and providers
     const l1Provider = new ethers.providers.JsonRpcProvider(L1_RPC_ENDPOINT);
     const l2Provider = new Provider(L2_RPC_ENDPOINT);
-    const richWallet = new Wallet(L1_RICH.pk, l2Provider, l1Provider);
+    const zkWallet = new Wallet(L1_RICH.pk, l2Provider, l1Provider);
 
     const walletEthers = new ethers.Wallet(L1_RICH_PK, l1Provider);
     const ERC20_L1 = new ethers.Contract(
@@ -219,7 +56,7 @@ async function main() {
     console.log(`L2 Endpoint: ${L2_RPC_ENDPOINT}`);
     console.log("\n#####################################################\n");
 
-    const erc20Balance: number = await getERC20Balance(
+    const erc20Balance: number = await helpers.l1.getERC20Balance(
         walletEthers.address,
         ERC20_L1,
         ERC20_DECIMALS_MUL,
@@ -234,7 +71,7 @@ async function main() {
         console.log(
             `${AMOUNT_TO_BRIDGE} Minted ${ERC20_SYMBOL}, txHash: ${receipt.transactionHash}`
         );
-        await getERC20Balance(
+        await helpers.l1.getERC20Balance(
             walletEthers.address,
             ERC20_L1,
             ERC20_DECIMALS_MUL,
@@ -247,10 +84,10 @@ async function main() {
     );
     console.log("=====================================================");
     console.log(`Send ETH on L1`);
-    await sendMultipleL1ETHTransfers(walletEthers, wallets, amountForEach)
+    await helpers.l1.sendMultipleL1ETHTransfers(walletEthers, wallets, amountForEach);
     console.log("=====================================================");
     console.log("Send ERC20 on L1");
-    await sendMultipleL1ERC20Transfers(
+    await helpers.l1.sendMultipleL1ERC20Transfers(
         walletEthers,
         wallets,
         amountForEach,
@@ -262,10 +99,14 @@ async function main() {
         await walletEthers.provider.getBalance(walletEthers.address)
     );
     console.log("ERC20 Sent on L1");
-    console.log(`[TODO: FIX gas consumption calculations] Consumed L1 Gas: ${ethers.utils.formatEther(consumedL1Gas.sub(ethers.utils.parseEther(AMOUNT_TO_BRIDGE)))}`);
+    console.log(
+        `[TODO: FIX gas consumption calculations] Consumed L1 Gas: ${ethers.utils.formatEther(consumedL1Gas.sub(ethers.utils.parseEther(AMOUNT_TO_BRIDGE)))}`
+    );
 
-
-    const BASE_TOKEN_ADDRESS = await l2Provider.getBaseTokenContractAddress();
+    console.log("=====================================================");
+    console.log("Deposit BaseToken L1->L2");
+    await helpers.l2.sendMultipleL2BaseTokenDeposits(zkWallet, wallets, amountForEach / 2);
+    console.log("=====================================================");
 }
 
 main()
