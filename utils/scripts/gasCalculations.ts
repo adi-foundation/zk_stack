@@ -10,7 +10,7 @@ const L1_RPC_ENDPOINT = env.L1_RPC_URL || "http://127.0.0.1:8545";
 const L2_RPC_ENDPOINT = env.L2_RPC_URL || "http://127.0.0.1:3050";
 
 const AMOUNT_TO_BRIDGE = env.AMOUNT_TO_BRIDGE || "100";
-const AMOUNT_OF_WALLETS = 1;
+const AMOUNT_OF_WALLETS = 5;
 
 const L1_RICH_PK =
     env.L1_RICH_PK ||
@@ -27,11 +27,11 @@ async function main() {
     const l2Provider = new Provider(L2_RPC_ENDPOINT);
     const zkWallet = new Wallet(L1_RICH.pk, l2Provider, l1Provider);
 
-    const walletEthers = new ethers.Wallet(L1_RICH_PK, l1Provider);
+    const ethWallet = new ethers.Wallet(L1_RICH_PK, l1Provider);
     const ERC20_L1 = new ethers.Contract(
         await l2Provider.getBaseTokenContractAddress(),
         contractAbi,
-        walletEthers
+        ethWallet
     );
     const ERC20_SYMBOL: string = await ERC20_L1.symbol();
     const ERC20_DECIMALS_MUL = Math.pow(10, Number(await ERC20_L1.decimals()));
@@ -57,14 +57,14 @@ async function main() {
     console.log("\n#####################################################\n");
 
     const erc20Balance: number = await helpers.l1.getERC20Balance(
-        walletEthers.address,
+        ethWallet.address,
         ERC20_L1,
         ERC20_DECIMALS_MUL,
         ERC20_SYMBOL
     );
     if (erc20Balance <= Number(AMOUNT_TO_BRIDGE)) {
         const response = await ERC20_L1.mint(
-            walletEthers.address,
+            ethWallet.address,
             BigInt(Number(AMOUNT_TO_BRIDGE) * ERC20_DECIMALS_MUL)
         );
         const receipt = await response.wait();
@@ -72,23 +72,23 @@ async function main() {
             `${AMOUNT_TO_BRIDGE} Minted ${ERC20_SYMBOL}, txHash: ${receipt.transactionHash}`
         );
         await helpers.l1.getERC20Balance(
-            walletEthers.address,
+            ethWallet.address,
             ERC20_L1,
             ERC20_DECIMALS_MUL,
             ERC20_SYMBOL
         );
     }
 
-    let consumedL1Gas = await walletEthers.provider.getBalance(
-        walletEthers.address
+    let consumedL1Gas = await ethWallet.provider.getBalance(
+        ethWallet.address
     );
     console.log("=====================================================");
     console.log(`Send ETH on L1`);
-    await helpers.l1.sendMultipleL1ETHTransfers(walletEthers, wallets, amountForEach);
+    await helpers.l1.sendMultipleL1ETHTransfers(ethWallet, wallets, amountForEach);
     console.log("=====================================================");
     console.log("Send ERC20 on L1");
     await helpers.l1.sendMultipleL1ERC20Transfers(
-        walletEthers,
+        ethWallet,
         wallets,
         amountForEach,
         ERC20_L1
@@ -96,7 +96,7 @@ async function main() {
     console.log("=====================================================");
 
     consumedL1Gas = consumedL1Gas.sub(
-        await walletEthers.provider.getBalance(walletEthers.address)
+        await ethWallet.provider.getBalance(ethWallet.address)
     );
     console.log("ERC20 Sent on L1");
     console.log(
@@ -105,7 +105,7 @@ async function main() {
 
     console.log("=====================================================");
     console.log("Deposit BaseToken L1->L2");
-    await helpers.l2.sendMultipleL2BaseTokenDeposits(zkWallet, wallets, amountForEach / 2);
+    await helpers.l2.sendMultipleL2BaseTokenDeposits(zkWallet, ethWallet, wallets, amountForEach / 2);
     console.log("=====================================================");
 }
 

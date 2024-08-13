@@ -4,54 +4,52 @@ import { IERC1271, IERC20 } from "zksync-ethers/build/utils";
 
 export async function l1ToL2ERC20Deposit(
     zkWallet: Wallet,
-    nonce: number,
+    ethWallet: ethers.Wallet, // Used to get allowance
     token: string,
     amount: string
 ) {
-    // Check Allowance [wip]
-    const ERC20_L1 = new ethers.Contract(token, IERC20, zkWallet);
-    let allowance = ERC20_L1.allowance(token, zkWallet.address)
-        .then(async (allowance) => {
-            return allowance;
-        })
-        .catch((_error) => {
-            return 0;
-        });
-
-    if (allowance <= amount) {
-        const approveTx = await ERC20_L1.approve(zkWallet.address, ethers.utils.parseEther(String(Number(amount) * 1.05)));
-        await approveTx.wait();
-    }
-
-    allowance = ERC20_L1.allowance(token, zkWallet.address)
-        .then(async (allowance) => {
-            return allowance;
-        })
-        .catch((_error) => {
-            return 0;
-        });
-
-    console.log(`Current allowance: ${ethers.utils.formatEther(allowance)}`);
+    // Check Allowance [wip] - This breaks the nonce
+    //const ERC20_L1 = new ethers.Contract(token, IERC20, ethWallet);
+    //let allowance = await ERC20_L1.allowance(ethWallet.address, ethWallet.address)
+    //    .then(async (allowance) => {
+    //        return ethers.utils.formatEther(allowance);
+    //    })
+    //    .catch((_error) => {
+    //        return ethers.utils.formatEther(0);
+    //    });
+    //
+    //const value = ethers.utils.parseEther(String(Number(amount) * 1.01));
+    //if (ethers.utils.parseEther(allowance).lt(value)) {
+    //    const approveTx = await ERC20_L1.approve(ethWallet.address, value);
+    //    await approveTx.wait();
+    //}
+    //
+    //
+    //allowance = await ERC20_L1.allowance(ethWallet.address, ethWallet.address)
+    //    .then(async (allowance) => {
+    //        return ethers.utils.formatEther(allowance);
+    //    })
+    //    .catch((_error) => {
+    //        return ethers.utils.formatEther(0);
+    //    });
+    //
+    //console.log(`Current allowance: ${allowance}`);
     // --------------------------------
-
+    console.log(`[TODO: FIX gasLimit calculations]`);
     const txEstimate = await zkWallet.getDepositTx({
         token,
-        to: zkWallet.address,
-        amount: ethers.utils.parseEther(amount)
+        amount: ethers.utils.parseEther(amount),
     });
-    const limit = await zkWallet.estimateGasDeposit(txEstimate);
+    // When the gas is estimated, it fails
+    // const limit = await zkWallet.estimateGasDeposit(txEstimate);
     // TODO: maybe it is not necessary to multiply the gasLimit in order to have some headroom
-    console.log(`[TODO: FIX gasLimit calculations`);
-    const gasLimit = Math.ceil(limit.toNumber() * 1.2);
+    //const gasLimit = Math.ceil(limit.toNumber() * 1.2);
     return zkWallet
         .deposit({
             token,
-            amount: ethers.utils.parseEther(amount).sub(gasLimit),
+            amount: ethers.utils.parseEther(amount),
             approveERC20: true,
             approveBaseERC20: true,
-            overrides: {
-                nonce,
-            },
         })
         .then(async (response) => {
             const receipt = await response.wait();
@@ -74,22 +72,20 @@ export async function l1ToL2ERC20Deposit(
 
 export async function sendMultipleL2BaseTokenDeposits(
     zkWallet: Wallet,
+    ethWallet: ethers.Wallet,
     wallets: Wallet[],
     amountForEach: string | number
 ) {
     const amount =
         typeof amountForEach == "number" ? amountForEach.toString() : amountForEach;
-    let nonce = await zkWallet.providerL1!.getTransactionCount(
-        zkWallet.address,
-        "latest"
-    );
+
     const transactionPromises: Promise<ethers.providers.TransactionResponse>[] =
         [];
     const baseTokenAddress = await zkWallet.provider.getBaseTokenContractAddress();
     for (const w of wallets) {
         const transactionPromise = l1ToL2ERC20Deposit(
             w,
-            nonce++,
+            ethWallet,
             baseTokenAddress,
             amount
         );
