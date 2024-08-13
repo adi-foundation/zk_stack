@@ -111,12 +111,10 @@ export async function loadTest(l1url: string, l2url: string, pk: string, numberO
     console.log(`Consumed L1 Gas: ${ethers.utils.formatEther(consumedL1Gas)}`);
 
     console.log("=====================================================");
-    
-    console.log(`[TODO: ADD gasLimit calculations]`);
-    
+
     const amountForEachToDeposit = amountForEach / 2;
     console.log("[L1->L2]: Deposit BaseToken");
-    await helpers.l2.sendMultipleL2BaseTokenDeposits(zkWallet, ethWallet, wallets, amountForEachToDeposit);
+    await helpers.l2.sendMultipleL2BaseTokenDeposits(zkWallet, wallets, amountForEachToDeposit);
 
     console.log("=====================================================");
 

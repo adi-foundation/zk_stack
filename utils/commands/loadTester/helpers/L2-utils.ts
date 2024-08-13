@@ -3,46 +3,9 @@ import * as ethers from "ethers";
 
 export async function l1ToL2ERC20Deposit(
     zkWallet: Wallet,
-    ethWallet: ethers.Wallet, // Used to get allowance
     token: string,
     amount: string
 ) {
-    // Check Allowance [wip] - This breaks the nonce
-    //const ERC20_L1 = new ethers.Contract(token, IERC20, ethWallet);
-    //let allowance = await ERC20_L1.allowance(ethWallet.address, ethWallet.address)
-    //    .then(async (allowance) => {
-    //        return ethers.utils.formatEther(allowance);
-    //    })
-    //    .catch((_error) => {
-    //        return ethers.utils.formatEther(0);
-    //    });
-    //
-    //const value = ethers.utils.parseEther(String(Number(amount) * 1.01));
-    //if (ethers.utils.parseEther(allowance).lt(value)) {
-    //    const approveTx = await ERC20_L1.approve(ethWallet.address, value);
-    //    await approveTx.wait();
-    //}
-    //
-    //
-    //allowance = await ERC20_L1.allowance(ethWallet.address, ethWallet.address)
-    //    .then(async (allowance) => {
-    //        return ethers.utils.formatEther(allowance);
-    //    })
-    //    .catch((_error) => {
-    //        return ethers.utils.formatEther(0);
-    //    });
-    //
-    //console.log(`Current allowance: ${allowance}`);
-    // --------------------------------
-    //console.log(`[TODO: FIX gasLimit calculations]`);
-    const txEstimate = await zkWallet.getDepositTx({
-        token,
-        amount: ethers.utils.parseEther(amount),
-    });
-    // When the gas is estimated, it fails
-    // const limit = await zkWallet.estimateGasDeposit(txEstimate);
-    // TODO: maybe it is not necessary to multiply the gasLimit in order to have some headroom
-    //const gasLimit = Math.ceil(limit.toNumber() * 1.2);
     return zkWallet
         .deposit({
             token,
@@ -68,7 +31,6 @@ export async function l1ToL2ERC20Deposit(
 
 export async function sendMultipleL2BaseTokenDeposits(
     zkWallet: Wallet,
-    ethWallet: ethers.Wallet,
     wallets: Wallet[],
     amountForEach: string | number
 ) {
@@ -81,7 +43,6 @@ export async function sendMultipleL2BaseTokenDeposits(
     for (const w of wallets) {
         const transactionPromise = l1ToL2ERC20Deposit(
             w,
-            ethWallet,
             baseTokenAddress,
             amount
         );
