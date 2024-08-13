@@ -25,9 +25,7 @@ run:
 	@echo "Running the Docker container..."
 	@echo "To exit [Ctrl + P + Q]"
 	@docker run -it --name $(DOCKER_CONTAINER) \
-		--entrypoint /bin/bash \
 		$(DOCKER_IMAGE)
-
 attach:
 	@echo "Attaching to the Docker container..."
 	@docker exec -it $(DOCKER_CONTAINER) /bin/bash
