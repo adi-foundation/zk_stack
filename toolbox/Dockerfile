@@ -53,4 +53,6 @@ WORKDIR /root
 COPY custom-wallets.yaml /root/custom-wallets.yaml
 COPY entrypoint.sh /root/entrypoint.sh
 RUN chmod +x /root/entrypoint.sh
+RUN service postgresql start && su - postgres -c "psql -c \"ALTER USER postgres PASSWORD 'notsecurepassword';\"" && service postgresql restart;
+
 # ENTRYPOINT ["/root/entrypoint.sh"]
