@@ -104,8 +104,15 @@ async function main() {
     );
 
     console.log("=====================================================");
-    console.log("Deposit BaseToken L1->L2");
-    await helpers.l2.sendMultipleL2BaseTokenDeposits(zkWallet, ethWallet, wallets, amountForEach / 2);
+    const amountForEachToDeposit = amountForEach / 2;
+    console.log("[L1->L2]: Deposit BaseToken");
+    await helpers.l2.sendMultipleL2BaseTokenDeposits(zkWallet, ethWallet, wallets, amountForEachToDeposit);
+    console.log("=====================================================");
+    
+    console.log("=====================================================");
+    const amountForEachToTransfer = amountForEachToDeposit / 2;
+    console.log("[L2->L2]: Transfer BaseToken");
+    await helpers.l2.sendMultipleL2Transfers(wallets, amountForEachToTransfer);
     console.log("=====================================================");
 }
 
