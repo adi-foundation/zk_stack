@@ -50,9 +50,12 @@ export async function l1ERC20Transfer(
         })
         .then(async (response) => {
             const receipt = await response.wait();
-            console.log("#####################################################");
-            console.log(`Wallet: ${address}\nTx hash: ${receipt.transactionHash}`);
-            console.log("#####################################################");
+            const msg =
+                `#####################################################
+                Wallet: ${ethwallet.address}
+                Tx hash: ${receipt.transactionHash}
+                #####################################################`;
+            console.log(msg.split('\n').map(line => line.trim()).join('\n'));
             return response;
         })
         .catch((error) => {
@@ -114,11 +117,12 @@ export async function sendMultipleL1ETHTransfers(
             .sendTransaction(tx)
             .then(async (response) => {
                 const receipt = await response.wait();
-                console.log("#####################################################");
-                console.log(
-                    `Wallet: ${w.address}\nTx hash: ${receipt.transactionHash}`
-                );
-                console.log("#####################################################");
+                const msg =
+                    `#####################################################
+                    Wallet: ${w.address}
+                    Tx hash: ${receipt.transactionHash}
+                    #####################################################`;
+                console.log(msg.split('\n').map(line => line.trim()).join('\n'));
                 return response;
             })
             .catch((error) => {

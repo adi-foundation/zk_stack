@@ -1,15 +1,16 @@
 import { Wallet, Provider } from "zksync-ethers";
-
 import * as ethers from "ethers";
+
 import { env } from "process";
-import contractAbi from "./erc20_abi.json";
+import contractAbi from "./helpers/erc20_abi.json";
 import { helpers } from "./helpers";
 
 // HTTP RPC endpoints
-const L1_RPC_ENDPOINT = env.L1_RPC_URL || "http://127.0.0.1:8545";
-const L2_RPC_ENDPOINT = env.L2_RPC_URL || "http://127.0.0.1:3050";
+const L1_RPC_ENDPOINT = "http://127.0.0.1:8545";
+const L2_RPC_ENDPOINT = "http://127.0.0.1:3050";
 
-const AMOUNT_TO_BRIDGE = env.AMOUNT_TO_BRIDGE || "100";
+const AMOUNT_TO_BRIDGE = "100";
+const AMOUNT_OF_ETH = "0.05";
 const AMOUNT_OF_WALLETS = 5;
 
 const L1_RICH_PK =
@@ -21,13 +22,14 @@ const L1_RICH = {
     pk: L1_RICH_PK,
 };
 
-async function main() {
-    // Initialize the rich wallet, ERC20 contract and providers
-    const l1Provider = new ethers.providers.JsonRpcProvider(L1_RPC_ENDPOINT);
-    const l2Provider = new Provider(L2_RPC_ENDPOINT);
-    const zkWallet = new Wallet(L1_RICH.pk, l2Provider, l1Provider);
+export async function loadTest(l1url: string, l2url: string, pk: string, numberOfWallets: number, amount: string) {
 
-    const ethWallet = new ethers.Wallet(L1_RICH_PK, l1Provider);
+    // Initialize the rich wallet, ERC20 contract and providers
+    const l1Provider = new ethers.providers.JsonRpcProvider(l1url || L1_RPC_ENDPOINT);
+    const l2Provider = new Provider(l2url || L2_RPC_ENDPOINT);
+    const zkWallet = new Wallet(pk || L1_RICH.pk, l2Provider, l1Provider);
+
+    const ethWallet = new ethers.Wallet(pk || L1_RICH_PK, l1Provider);
     const ERC20_L1 = new ethers.Contract(
         await l2Provider.getBaseTokenContractAddress(),
         contractAbi,
@@ -37,13 +39,16 @@ async function main() {
     const ERC20_DECIMALS_MUL = Math.pow(10, Number(await ERC20_L1.decimals()));
 
     // Initialize the rich wallet.
+    const amountOfWallets = numberOfWallets || AMOUNT_OF_WALLETS;
     let wallets: Wallet[] = new Array<Wallet>();
-    for (let index = 0; index < AMOUNT_OF_WALLETS; index++) {
+    for (let index = 0; index < amountOfWallets; index++) {
         const pk = Wallet.createRandom().privateKey;
         const w = new Wallet(pk, l2Provider, l1Provider);
         wallets.push(w);
     }
-    const amountForEach = Number(AMOUNT_TO_BRIDGE) / wallets.length;
+
+    const amountToBridge = Number(amount || AMOUNT_TO_BRIDGE);
+    const amountForEach = amountToBridge / wallets.length;
 
     console.log("#####################################################\n");
     wallets.forEach((w, i) => {
@@ -52,8 +57,8 @@ async function main() {
         );
     });
     console.log("\n#####################################################\n");
-    console.log(`L1 Endpoint: ${L1_RPC_ENDPOINT}`);
-    console.log(`L2 Endpoint: ${L2_RPC_ENDPOINT}`);
+    console.log(`[L1] Endpoint: ${L1_RPC_ENDPOINT}`);
+    console.log(`[L2] Endpoint: ${L2_RPC_ENDPOINT}`);
     console.log("\n#####################################################\n");
 
     const erc20Balance: number = await helpers.l1.getERC20Balance(
@@ -62,14 +67,14 @@ async function main() {
         ERC20_DECIMALS_MUL,
         ERC20_SYMBOL
     );
-    if (erc20Balance <= Number(AMOUNT_TO_BRIDGE)) {
+    if (erc20Balance <= amountToBridge) {
         const response = await ERC20_L1.mint(
             ethWallet.address,
-            BigInt(Number(AMOUNT_TO_BRIDGE) * ERC20_DECIMALS_MUL)
+            BigInt(amountToBridge * ERC20_DECIMALS_MUL)
         );
         const receipt = await response.wait();
         console.log(
-            `${AMOUNT_TO_BRIDGE} Minted ${ERC20_SYMBOL}, txHash: ${receipt.transactionHash}`
+            `${amountToBridge} Minted ${ERC20_SYMBOL}, txHash: ${receipt.transactionHash}`
         );
         await helpers.l1.getERC20Balance(
             ethWallet.address,
@@ -79,46 +84,45 @@ async function main() {
         );
     }
 
-    let consumedL1Gas = await ethWallet.provider.getBalance(
-        ethWallet.address
-    );
+    let consumedL1Gas = await ethWallet.provider.getBalance(ethWallet.address);
+
     console.log("=====================================================");
-    console.log(`Send ETH on L1`);
-    await helpers.l1.sendMultipleL1ETHTransfers(ethWallet, wallets, amountForEach);
+
+    console.log(`[L1 -> L1]: Send ETH`);
+    const amountOfEth = ethers.utils.parseEther(AMOUNT_OF_ETH).div(wallets.length);
+    await helpers.l1.sendMultipleL1ETHTransfers(ethWallet, wallets, ethers.utils.formatEther(amountOfEth));
+
     console.log("=====================================================");
-    console.log("Send ERC20 on L1");
+
+    console.log("[L1 -> L1]: Send ERC20");
     await helpers.l1.sendMultipleL1ERC20Transfers(
         ethWallet,
         wallets,
         amountForEach,
         ERC20_L1
     );
+
     console.log("=====================================================");
 
-    consumedL1Gas = consumedL1Gas.sub(
+    consumedL1Gas = consumedL1Gas.add(amountOfEth).sub(
         await ethWallet.provider.getBalance(ethWallet.address)
     );
-    console.log("ERC20 Sent on L1");
-    console.log(
-        `[TODO: FIX gas consumption calculations] Consumed L1 Gas: ${ethers.utils.formatEther(consumedL1Gas.sub(ethers.utils.parseEther(AMOUNT_TO_BRIDGE)))}`
-    );
+
+    console.log(`Consumed L1 Gas: ${ethers.utils.formatEther(consumedL1Gas)}`);
 
     console.log("=====================================================");
+    
+    console.log(`[TODO: ADD gasLimit calculations]`);
+    
     const amountForEachToDeposit = amountForEach / 2;
     console.log("[L1->L2]: Deposit BaseToken");
     await helpers.l2.sendMultipleL2BaseTokenDeposits(zkWallet, ethWallet, wallets, amountForEachToDeposit);
+
     console.log("=====================================================");
-    
-    console.log("=====================================================");
+
     const amountForEachToTransfer = amountForEachToDeposit / 2;
     console.log("[L2->L2]: Transfer BaseToken");
     await helpers.l2.sendMultipleL2Transfers(wallets, amountForEachToTransfer);
+
     console.log("=====================================================");
 }
-
-main()
-    .then()
-    .catch((error) => {
-        console.error(error);
-        env.exitCode = "1";
-    });

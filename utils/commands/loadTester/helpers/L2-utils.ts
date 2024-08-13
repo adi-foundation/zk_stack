@@ -34,7 +34,7 @@ export async function l1ToL2ERC20Deposit(
     //
     //console.log(`Current allowance: ${allowance}`);
     // --------------------------------
-    console.log(`[TODO: FIX gasLimit calculations]`);
+    //console.log(`[TODO: FIX gasLimit calculations]`);
     const txEstimate = await zkWallet.getDepositTx({
         token,
         amount: ethers.utils.parseEther(amount),
@@ -51,14 +51,13 @@ export async function l1ToL2ERC20Deposit(
             approveBaseERC20: true,
         }).then(async (response) => {
             const receipt = await response.wait();
-            console.log("#####################################################");
-            console.log(
-                `Wallet: ${zkWallet.address}\nTx hash: ${receipt.transactionHash}`
-            );
-            console.log(
-                `L2 balance after deposit: ${ethers.utils.formatEther(await zkWallet.getBalance())}`
-            );
-            console.log("#####################################################");
+            const msg =
+                `#####################################################
+                Wallet: ${zkWallet.address}
+                Tx hash: ${receipt.transactionHash}
+                L2 balance after deposit: ${ethers.utils.formatEther(await zkWallet.getBalance())}
+                #####################################################`;
+            console.log(msg.split('\n').map(line => line.trim()).join('\n'));
             return response;
         }).catch((error) => {
             throw error;
@@ -109,25 +108,26 @@ export async function sendMultipleL2Transfers(
         randomWallets.push(w);
     }
 
-    console.log("#####################################################\n");
+    console.log("\n#####################################################\n");
     randomWallets.forEach((w, i) => {
         console.log(
             `Wallet(${i.toString().padStart(2, "0")}) addr: ${w.address} || pk: ${w.privateKey}`
         );
     });
+    console.log("\n#####################################################\n");
 
     for (let i = 0; i < wallets.length; i++) {
-        console.log(`[TODO: ADD gasLimit calculations]`);
         const transactionPromise = wallets[i].transfer({
             to: randomWallets[i].address,
             amount: ethers.utils.parseEther(amount)
         }).then(async (response) => {
             const receipt = await response.wait();
-            console.log("#####################################################");
-            console.log(
-                `(to):\nWallet ${randomWallets[i].address}: ${ethers.utils.formatEther(await randomWallets[i].getBalance())}\nTx hash: ${receipt.transactionHash}`
-            );
-            console.log("#####################################################");
+            const msg =
+                `#####################################################
+                (to): ${randomWallets[i].address} balance: ${ethers.utils.formatEther(await randomWallets[i].getBalance())}
+                Tx hash: ${receipt.transactionHash}
+                #####################################################`;
+            console.log(msg.split('\n').map(line => line.trim()).join('\n'));
             return response;
         }).catch((error) => {
             throw error;
