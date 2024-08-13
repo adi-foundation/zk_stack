@@ -1,0 +1,24 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: zk-init-job
+  namespace: default
+spec:
+  completions: 1
+  template:
+    spec:
+      serviceAccountName: configmaps-w
+      containers:
+      - name: zksync
+        image: us-central1-docker.pkg.dev/zksync-413615/zksync/zk-init:latest
+        env:
+        - name: BASE_TOKEN_SYMBOL
+          value: IHC
+        volumeMounts:
+        - name: custom-config-volume
+          mountPath: /configs
+      restartPolicy: Never
+      volumes:
+      - name: custom-config-volume
+        configMap:
+          name: zk-init-configmap
