@@ -144,7 +144,7 @@ async function main() {
     });
     const receiptFeeWithdrawal = await txFeeWithdrawal.wait();
     console.log(`Tx(3): ${receiptFeeWithdrawal.transactionHash}`);
-    
+
     while (true) {
         const tx1 = await wallet2.transfer({
             to: await wallet3.getAddress(),
