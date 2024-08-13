@@ -20,12 +20,14 @@ zk_inception ecosystem create \
 
 # Move to the ecosystem directory
 cd ecosystem || { echo "Failed to change directory to ecosystem"; exit 1; }
+su - postgres psql 
 
 # Run zk_inception containers
 echo "Starting containers with zk_inception..."
 zk_inception ecosystem init \
     --deploy-paymaster false \
     --deploy-erc20 false \
-    --deploy-ecosystem true \
+    --deploy-ecosystem false \
+    --use-default \
     --verbose \
-    --l1-rpc-url "https://rpc.sepolia.org" || { echo "Failed to init the ecosystem"; exit 1; }
+    --l1-rpc-url "https://ethereum-sepolia-rpc.publicnode.com" || { echo "Failed to init the ecosystem"; exit 1; }

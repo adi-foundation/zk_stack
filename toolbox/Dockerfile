@@ -13,7 +13,9 @@ RUN apt-get update && \
     docker.io \
     vim \
     gnupg  \
-    postgresql && \
+    postgresql \
+    clang \
+    llvm && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
@@ -42,6 +44,7 @@ RUN git clone https://github.com/lambdaclass/zksync-era.git
 
 WORKDIR /usr/src/app/zksync-era
 RUN git checkout dockerize-toolbox
+RUN git pull 
 
 WORKDIR /usr/src/app/zksync-era/zk_toolbox
 RUN cargo install --path ./crates/zk_inception --force --locked

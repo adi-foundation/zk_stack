@@ -5,10 +5,6 @@ services:
     build: .
     volumes:
       - ./custom-wallets.yaml:/root/custom-wallets.yaml
-    
-    ports:
-      - "8545:8545" 
-      - "5432:5432"
     environment:
       - RUST_LOG=info
     restart: unless-stopped
