@@ -1,37 +1,7 @@
 import * as ethers from "ethers";
 import { Wallet, utils } from "zksync-ethers";
 import { getProviders } from "./common";
-
-const ERC20balanceABI = [
-    // balanceOf
-    {
-        constant: true,
-        inputs: [{ name: "_owner", type: "address" }],
-        name: "balanceOf",
-        outputs: [{ name: "balance", type: "uint256" }],
-        type: "function",
-    },
-    // symbol
-    {
-        constant: true,
-        inputs: [],
-        name: "symbol",
-        outputs: [{ "name": "", "type": "string" }],
-        payable: false,
-        stateMutability: "view",
-        type: "function"
-    },
-    // decimals
-    {
-        constant: true,
-        inputs: [],
-        name: "decimals",
-        outputs: [{ "name": "", "type": "uint8" }],
-        payable: false,
-        stateMutability: "view",
-        type: "function"
-    },
-];
+import { IERC20 } from "zksync-ethers/build/utils";
 
 export async function depositBalance(erc20: boolean, from: string, amountToSend: string, l1url: string, l2url: string, mainnet: boolean) {
     const { l1provider, l2provider } = await getProviders(mainnet, l1url, l2url);
@@ -52,7 +22,7 @@ export async function depositBalance(erc20: boolean, from: string, amountToSend:
             console.error("Wrong ERC20 Contract Address Format");
             return;
         }
-        ERC20_L1 = new ethers.Contract(erc20Addr, ERC20balanceABI, l1provider);
+        ERC20_L1 = new ethers.Contract(erc20Addr, IERC20, l1provider);
         ERC20_SYMBOL = await ERC20_L1.symbol();
         ERC20_DECIMALS_MUL = Math.pow(10, Number(await ERC20_L1.decimals()));
         console.log(`ERC20 Symbol: ${ERC20_SYMBOL}`);
@@ -110,8 +80,8 @@ export async function depositBalance(erc20: boolean, from: string, amountToSend:
         console.log("#####################################################");
         console.log(`ZK Network URL: ${l2url}`);
         console.log(`ZK Network ChainID: ${(await l2provider.getNetwork()).chainId}`);
-        console.log(`L1 balance after deposit: ${ethers.utils.formatEther(await wallet.getBalanceL1())}`);
-        console.log(`L2 balance after deposit: ${ethers.utils.formatEther(await wallet.getBalance())}`);
+        console.log(`L1 balance before deposit: ${ethers.utils.formatEther(await wallet.getBalanceL1())}`);
+        console.log(`L2 balance before deposit: ${ethers.utils.formatEther(await wallet.getBalance())}`);
         console.log(`Bridge ${amount}${ethers.constants.EtherSymbol}`);
         console.log(`(from): ${fromAddr}`);
         try {
