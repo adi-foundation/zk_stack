@@ -13,8 +13,8 @@ export async function sendBalance(from: string, toAddr: string, amountToSend: st
         console.log("#####################################################")
         console.log(`L1 Network Name: ${(await l1provider.getNetwork()).name}`);
         console.log(`L1 Network ChainID: ${(await l1provider.getNetwork()).chainId}`);
-        console.log(`(from) balance before deposit: ${ethers.utils.formatEther(await l1provider.getBalance(fromAddr))}`);
-        console.log(`  (to) balance before deposit: ${ethers.utils.formatEther(await l1provider.getBalance(toAddr))}`);
+        console.log(`(from) balance before transfer: ${ethers.utils.formatEther(await l1provider.getBalance(fromAddr))}`);
+        console.log(`  (to) balance before transfer: ${ethers.utils.formatEther(await l1provider.getBalance(toAddr))}`);
         console.log(`Send ${amount}${ethers.constants.EtherSymbol}`);
         console.log(`(from): ${fromAddr}`);
         console.log(`  (to): ${toAddr}`);
@@ -38,8 +38,8 @@ export async function sendBalance(from: string, toAddr: string, amountToSend: st
             console.error(`Error Sending Tx: \n${e}`);
         });
         console.log("#####################################################");
-        console.log(`(from) balance before deposit: ${ethers.utils.formatEther(await l1provider.getBalance(ethers.utils.computeAddress(from)))}`);
-        console.log(`  (to) balance before deposit: ${ethers.utils.formatEther(await l1provider.getBalance(toAddr))}`);
+        console.log(`(from) balance after transfer: ${ethers.utils.formatEther(await l1provider.getBalance(ethers.utils.computeAddress(from)))}`);
+        console.log(`  (to) balance after transfer: ${ethers.utils.formatEther(await l1provider.getBalance(toAddr))}`);
         console.log("#####################################################");
     }
     else {
@@ -48,8 +48,8 @@ export async function sendBalance(from: string, toAddr: string, amountToSend: st
         console.log("#####################################################");
         console.log(`ZK Network URL: ${l2url}`);
         console.log(`ZK Network ChainID: ${(await l2provider.getNetwork()).chainId}`);
-        console.log(`(from) balance before deposit: ${ethers.utils.formatEther(await l2provider.getBalance(fromAddr))}`);
-        console.log(`  (to) balance before deposit: ${ethers.utils.formatEther(await l2provider.getBalance(toAddr))}`);
+        console.log(`(from) balance before transfer: ${ethers.utils.formatEther(await l2provider.getBalance(fromAddr))}`);
+        console.log(`  (to) balance before transfer: ${ethers.utils.formatEther(await l2provider.getBalance(toAddr))}`);
         console.log(`Send ${amount}${ethers.constants.EtherSymbol}`);
         console.log(`(from): ${fromAddr}`);
         console.log(`  (to): ${toAddr}`);
@@ -73,8 +73,8 @@ export async function sendBalance(from: string, toAddr: string, amountToSend: st
             console.error(`Error Sending Tx: \n${e}`);
         });
         console.log("#####################################################");
-        console.log(`(from) balance before deposit: ${ethers.utils.formatEther(await l2provider.getBalance(ethers.utils.computeAddress(from)))}`);
-        console.log(`  (to) balance before deposit: ${ethers.utils.formatEther(await l2provider.getBalance(toAddr))}`);
+        console.log(`(from) balance after transfer: ${ethers.utils.formatEther(await l2provider.getBalance(ethers.utils.computeAddress(from)))}`);
+        console.log(`  (to) balance after transfer: ${ethers.utils.formatEther(await l2provider.getBalance(toAddr))}`);
         console.log("#####################################################");
     }
 }
