@@ -85,6 +85,20 @@ async function main() {
             }
         );
 
+    cli.command("load-test", "\n\t└>Load Test. The cmd makes use of a rich pk in order to perform the tests.\n\t  It creates random Wallets\n\t  Sends some ERC20 (amount/wallets) on L1\n\t  Each wallet performs a deposit on L2\n\t The ERC20 is the zkStack's BaseToken")
+        .option("--l1url <l1url>", "ETH chain URL, defaults to localhost dev env")
+        .option("--l2url <l1url>", "zkStack chain URL, defaults to localhost dev env")
+        .option("--pk <pk>", "Rich PK, defaults to RETH's rich wallet")
+        .option("-a, --amount <a>", "ERC20 Amount to send, defaults to 100")
+        .option("-w, --wallets <w>", "Amount of wallets, defaults to 5")
+        .example("[dev-env]  load-test")
+        .example("[real-env] load-test --l1url <l1-url> --l2url <zkstack_url> --pk <pk> --amount <amount> --wallets <number-of-wallets>")
+        .action(
+            async (options) => {
+                await cmd.test.loadTest(options.l1url, options.l2url, options.pk, options.wallets, options.amount);
+            }
+        );
+
     cli.command("get-wallet [pk]", "\n\t└>Get Random Addr and PK or Get Addr if PK is passed as argument")
         .example("get-wallet")
         .action(
@@ -92,6 +106,7 @@ async function main() {
                 await cmd.utils.getRandomWallet(pk);
             }
         );
+
     cli.help();
     cli.parse();
 }
