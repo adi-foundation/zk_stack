@@ -7,6 +7,7 @@ metadata:
     kubernetes.io/ingress.global-static-ip-name: explorer-api-ip
     cert-manager.io/issuer: http01-issuer
     acme.cert-manager.io/http01-edit-in-place: "true"
+    networking.gke.io/v1beta1.FrontendConfig: "http-https-redirect"
   labels:
     app: explorer-api
 spec:
