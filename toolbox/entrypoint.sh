@@ -28,9 +28,16 @@ zk_inception ecosystem init \
     --deploy-erc20 false \
     --deploy-ecosystem true \
     --use-default \
+    --run-genesis false \
     --verbose \
     --l1-rpc-url "https://ethereum-sepolia-rpc.publicnode.com" || { echo "Failed to init the ecosystem"; exit 1; }
 
+echo "Starting postgresql..."
+service postgresql start && su - postgres -c "psql -c \"ALTER USER postgres PASSWORD 'notsecurepassword';\"" && service postgresql restart;
 
-zk_inception chain genesis 
+echo "Running server genesis..."
+zk_inception chain genesis --use-default \
+    --verbose || { echo "Failed to run server genesis"; exit 1; }
+
+echo "Running server"
 zk_inception server --components=api,eth,tree,state_keeper,housekeeper,commitment_generator,proof_data_handler,base_token_ratio_persister
