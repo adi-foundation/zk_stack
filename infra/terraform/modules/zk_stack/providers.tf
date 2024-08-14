@@ -26,16 +26,16 @@ terraform {
 }
 
 provider "kubernetes" {
-  host                   = "https://${module.zk-stack-stack-gke-cluster.endpoint}"
+  host                   = "https://${module.zk-stack-gke-cluster.endpoint}"
   token                  = data.google_client_config.default.access_token
-  cluster_ca_certificate = base64decode(module.zk-stack-stack-gke-cluster.ca_certificate)
+  cluster_ca_certificate = base64decode(module.zk-stack-gke-cluster.ca_certificate)
 }
 
 provider "helm" {
   kubernetes {
-     host                   = "https://${module.zk-stack-stack-gke-cluster.endpoint}"
+     host                   = "https://${module.zk-stack-gke-cluster.endpoint}"
      token                  = data.google_client_config.default.access_token
-     cluster_ca_certificate = base64decode(module.zk-stack-stack-gke-cluster.ca_certificate)
+     cluster_ca_certificate = base64decode(module.zk-stack-gke-cluster.ca_certificate)
   }
 }
 
