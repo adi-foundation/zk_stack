@@ -13,6 +13,11 @@ variable "project_id" {
   description = "ID of the GCP Project to deploy all the infrastructure"
 }
 
+variable "cluster_locations" {
+  type        = list
+  description = "List of GCP zones (inside the region you specified) where the cluster will be"
+}
+
 variable "cpu_machine_type" {
   type        = string
   default     = "c3-highmem-22"
