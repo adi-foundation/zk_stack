@@ -1,13 +1,15 @@
 module "zk_stack" {
   source = "git::https://github.com/lambdaclass/zk_stack//infra/terraform/modules/zk_stack"
 
-  region       = "us-east4"
-  cluster_name = "zksync-dev-02"
-  project_id   = "zksync-413615"
+  region            = "us-east4"
+  cluster_name      = "zksync-dev-99"
+  project_id        = "zksync-413615"
+  cluster_locations = ["us-east4-a", "us-east4-b"]
 
   # Nodes configs
-  cpu_nodes_locations = "us-central1-a"
-  gpu_nodes_locations = "us-central1-c"
+  cpu_machine_type    = "c3-standard-4"
+  cpu_nodes_locations = "us-east4-a"
+  gpu_nodes_locations = "us-east4-b"
 
   # DNS configuration
   aws_dns_zone                       = "zk-stack.lambdaclass.com"
@@ -34,4 +36,21 @@ module "zk_stack" {
   prover_object_store_bucket_name    = "prover-object-store-dev-2"
   snapshots_object_store_bucket_name = "snapshots-object-store-dev-2"
   prover_setup_data_bucket_name      = "prover-setup-data-2"
+
+  # Central DB configuration
+  db_size                = "db-custom-1-3840"
+  db_disk_size_gb        = "20"
+  sql_user               = "admin"
+  sql_password           = var.sql_password
+  # Prover DB configuration
+  prover_db_size         = "db-custom-1-3840"
+  prover_db_disk_size_gb = "20"
+  prover_sql_user        = "admin"
+  prover_sql_password    = var.prover_sql_password
+}
+
+variable "sql_password" {
+}
+
+variable "prover_sql_password" {
 }
