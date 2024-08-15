@@ -1,3 +1,4 @@
+# Public IPs
 resource "google_compute_global_address" "explorer-app" {
   name = "explorer-app-ip"
 }
@@ -82,8 +83,13 @@ data "google_compute_global_address" "en-grafana" {
   ]
 }
 
+# DNS
+resource "aws_route53_zone" "zk-stack" {
+  name = "zk-stack.lambdaclass.com"
+}
+
 data "aws_route53_zone" "zk-stack-lambdaclass-com" {
-  name         = "${var.aws_dns_zone}."
+  zone_id = aws_route53_zone.zk-stack.zone_id
 }
 
 resource "aws_route53_record" "k8s-explorer-sepolia" {
