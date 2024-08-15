@@ -189,3 +189,47 @@ variable "prover_setup_data_bucket_name" {
   default     = "prover-setup-data"
   description = "GCS Bucket name for the prover setup data bucket"
 }
+
+variable "db_size" {
+  type        = string
+  default     = "db-custom-4-15360"
+  description = "Cloud SQL General DB size/type"
+}
+
+variable "db_disk_size_gb" {
+  type        = string
+  default     = "100"
+  description = "Cloud SQL General DB disk size in GiB"
+}
+
+variable "sql_user" {
+  type        = string
+  description = "Cloud SQL General DB username"
+}
+
+variable "sql_password" {
+  type        = string
+  description = "Cloud SQL General DB password"
+}
+
+variable "prover_db_size" {
+  type        = string
+  default     = "db-custom-4-15360"
+  description = "Cloud SQL Prover DB size/type"
+}
+
+variable "prover_db_disk_size_gb" {
+  type        = string
+  default     = "100"
+  description = "Cloud SQL Prover DB disk size in GiB"
+}
+
+variable "prover_sql_user" {
+  type        = string
+  description = "Cloud SQL Prover DB username"
+}
+
+variable "prover_sql_password" {
+  type        = string
+  description = "Cloud SQL Prover DB password"
+}
