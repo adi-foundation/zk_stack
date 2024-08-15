@@ -233,3 +233,9 @@ variable "prover_sql_password" {
   type        = string
   description = "Cloud SQL Prover DB password"
 }
+
+variable "encryption_key_prevent_destroy" {
+  type        = bool
+  default     = true
+  description = "Whether to prevent destroying the GCP KMS decrpytion key for Kubernetes data"
+}
