@@ -10,3 +10,6 @@ terraform {
 provider "google" {
   project = "zksync-413615"
 }
+
+provider "aws" {
+}

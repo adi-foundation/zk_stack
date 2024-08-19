@@ -4,7 +4,7 @@ module "zk-stack-gke-cluster" {
   project_id                 = var.project_id
   name                       = var.cluster_name
   region                     = var.region
-  zones                      = ["${var.region}-a", "${var.region}-b", "${var.region}-c"]
+  zones                      = var.cluster_locations
   release_channel            = "STABLE"
 
   # Network config
