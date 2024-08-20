@@ -1,0 +1,14 @@
+[package]
+name = "safe"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+clap = "4.5.16"
+ethers = "2.0.14"
+ethers-contract = "2.0.14"
+eyre = "0.6.12"
+tokio = "1.39.3"
+tracing = "0.1.40"
+tracing-subscriber = "0.3.18"
+zksync-ethers-rs = { git = "https://www.github.com/lambdaclass/zksync-web3-rs", branch = "zksync-ethers-rs-v1"}
