@@ -1,4 +1,4 @@
-# Public IPs
+# GCP Global IPs
 resource "google_compute_global_address" "explorer-app" {
   name = "explorer-app-ip"
 }
@@ -83,94 +83,89 @@ data "google_compute_global_address" "en-grafana" {
   ]
 }
 
-# DNS
-resource "aws_route53_zone" "zk-stack" {
-  name = "zk-stack.lambdaclass.com"
+# Cloudflare DNS
+data "cloudflare_zone" "lambdaclass" {
+  name = var.cloudflare_dns_zone
 }
 
-data "aws_route53_zone" "zk-stack-lambdaclass-com" {
-  zone_id = aws_route53_zone.zk-stack.zone_id
-}
-
-resource "aws_route53_record" "k8s-explorer-sepolia" {
-  zone_id = data.aws_route53_zone.zk-stack-lambdaclass-com.id
-  name    = "${var.explorer_sepolia_dns}.${data.aws_route53_zone.zk-stack-lambdaclass-com.name}"
+resource "cloudflare_record" "k8s-explorer-sepolia" {
+  zone_id = data.cloudflare_zone.lambdaclass.id
+  name    = var.explorer_sepolia_dns
+  content = data.google_compute_global_address.explorer-app.address
   type    = "A"
-  ttl     = "300"
-  records = [data.google_compute_global_address.explorer-app.address]
+  proxied = true
 
   depends_on = [
     google_compute_global_address.explorer-app
   ]
 }
 
-resource "aws_route53_record" "k8s-explorer-api-sepolia" {
-  zone_id = data.aws_route53_zone.zk-stack-lambdaclass-com.id
-  name    = "${var.explorer_api_sepolia_dns}.${data.aws_route53_zone.zk-stack-lambdaclass-com.name}"
+resource "cloudflare_record" "k8s-explorer-api-sepolia" {
+  zone_id = data.cloudflare_zone.lambdaclass.id
+  name    = var.explorer_api_sepolia_dns
+  content = data.google_compute_global_address.explorer-api.address
   type    = "A"
-  ttl     = "300"
-  records = [data.google_compute_global_address.explorer-api.address]
+  proxied = true
 
   depends_on = [
     google_compute_global_address.explorer-api
   ]
 }
 
-resource "aws_route53_record" "k8s-portal-sepolia" {
-  zone_id = data.aws_route53_zone.zk-stack-lambdaclass-com.id
-  name    = "${var.portal_sepolia_dns}.${data.aws_route53_zone.zk-stack-lambdaclass-com.name}"
+resource "cloudflare_record" "k8s-portal-sepolia" {
+  zone_id = data.cloudflare_zone.lambdaclass.id
+  name    = var.portal_sepolia_dns
+  content = data.google_compute_global_address.portal.address
   type    = "A"
-  ttl     = "300"
-  records = [data.google_compute_global_address.portal.address]
+  proxied = true
 
   depends_on = [
     google_compute_global_address.portal
   ]
 }
 
-resource "aws_route53_record" "k8s-rpc-sepolia" {
-  zone_id = data.aws_route53_zone.zk-stack-lambdaclass-com.id
-  name    = "${var.rpc_sepolia_dns}.${data.aws_route53_zone.zk-stack-lambdaclass-com.name}"
+resource "cloudflare_record" "k8s-rpc-sepolia" {
+  zone_id = data.cloudflare_zone.lambdaclass.id
+  name    = var.rpc_sepolia_dns
+  content = data.google_compute_global_address.server.address
   type    = "A"
-  ttl     = "300"
-  records = [data.google_compute_global_address.server.address]
+  proxied = true
 
   depends_on = [
     google_compute_global_address.server
   ]
 }
 
-resource "aws_route53_record" "k8s-grafana-sepolia" {
-  zone_id = data.aws_route53_zone.zk-stack-lambdaclass-com.id
-  name    = "${var.grafana_sepolia_dns}.${data.aws_route53_zone.zk-stack-lambdaclass-com.name}"
+resource "cloudflare_record" "k8s-grafana-sepolia" {
+  zone_id = data.cloudflare_zone.lambdaclass.id
+  name    = var.grafana_sepolia_dns
+  content = data.google_compute_global_address.grafana.address
   type    = "A"
-  ttl     = "300"
-  records = [data.google_compute_global_address.grafana.address]
+  proxied = true
 
   depends_on = [
     google_compute_global_address.grafana
   ]
 }
 
-resource "aws_route53_record" "k8s-en01-rpc-sepolia" {
-  zone_id = data.aws_route53_zone.zk-stack-lambdaclass-com.id
-  name    = "${var.external_node_sepolia_dns}.${data.aws_route53_zone.zk-stack-lambdaclass-com.name}"
+resource "cloudflare_record" "k8s-en01-rpc-sepolia" {
+  zone_id = data.cloudflare_zone.lambdaclass.id
+  name    = var.external_node_sepolia_dns
+  content = data.google_compute_global_address.external-node.address
   type    = "A"
-  ttl     = "300"
-  records = [data.google_compute_global_address.external-node.address]
+  proxied = true
 
   depends_on = [
     google_compute_global_address.external-node
   ]
 }
 
-
-resource "aws_route53_record" "k8s-en01-grafana-sepolia" {
-  zone_id = data.aws_route53_zone.zk-stack-lambdaclass-com.id
-  name    = "${var.external_node_grafana_sepolia_dns}.${data.aws_route53_zone.zk-stack-lambdaclass-com.name}"
+resource "cloudflare_record" "k8s-en01-grafana-sepolia" {
+  zone_id = data.cloudflare_zone.lambdaclass.id
+  name    = var.external_node_grafana_sepolia_dns
+  content = data.google_compute_global_address.en-grafana.address
   type    = "A"
-  ttl     = "300"
-  records = [data.google_compute_global_address.en-grafana.address]
+  proxied = true
 
   depends_on = [
     google_compute_global_address.en-grafana
