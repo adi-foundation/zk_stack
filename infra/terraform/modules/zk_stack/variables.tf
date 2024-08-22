@@ -127,7 +127,7 @@ variable "cloudflare_api_token" {
 
 variable "cloudflare_dns_zone" {
   type        = string
-  description = "Cloudflare DNS zone where to create DNS records"
+  description = "Cloudflare DNS zone where to create DNS records. For example: `example.com`"
 }
 
 variable "explorer_sepolia_dns" {
