@@ -94,10 +94,6 @@ resource "cloudflare_record" "k8s-explorer-sepolia" {
   content = data.google_compute_global_address.explorer-app.address
   type    = "A"
   proxied = true
-
-  depends_on = [
-    google_compute_global_address.explorer-app
-  ]
 }
 
 resource "cloudflare_record" "k8s-explorer-api-sepolia" {
@@ -106,10 +102,6 @@ resource "cloudflare_record" "k8s-explorer-api-sepolia" {
   content = data.google_compute_global_address.explorer-api.address
   type    = "A"
   proxied = true
-
-  depends_on = [
-    google_compute_global_address.explorer-api
-  ]
 }
 
 resource "cloudflare_record" "k8s-portal-sepolia" {
@@ -118,10 +110,6 @@ resource "cloudflare_record" "k8s-portal-sepolia" {
   content = data.google_compute_global_address.portal.address
   type    = "A"
   proxied = true
-
-  depends_on = [
-    google_compute_global_address.portal
-  ]
 }
 
 resource "cloudflare_record" "k8s-rpc-sepolia" {
@@ -130,10 +118,6 @@ resource "cloudflare_record" "k8s-rpc-sepolia" {
   content = data.google_compute_global_address.server.address
   type    = "A"
   proxied = true
-
-  depends_on = [
-    google_compute_global_address.server
-  ]
 }
 
 resource "cloudflare_record" "k8s-grafana-sepolia" {
@@ -142,10 +126,6 @@ resource "cloudflare_record" "k8s-grafana-sepolia" {
   content = data.google_compute_global_address.grafana.address
   type    = "A"
   proxied = true
-
-  depends_on = [
-    google_compute_global_address.grafana
-  ]
 }
 
 resource "cloudflare_record" "k8s-en01-rpc-sepolia" {
@@ -154,10 +134,6 @@ resource "cloudflare_record" "k8s-en01-rpc-sepolia" {
   content = data.google_compute_global_address.external-node.address
   type    = "A"
   proxied = true
-
-  depends_on = [
-    google_compute_global_address.external-node
-  ]
 }
 
 resource "cloudflare_record" "k8s-en01-grafana-sepolia" {
@@ -166,8 +142,4 @@ resource "cloudflare_record" "k8s-en01-grafana-sepolia" {
   content = data.google_compute_global_address.en-grafana.address
   type    = "A"
   proxied = true
-
-  depends_on = [
-    google_compute_global_address.en-grafana
-  ]
 }

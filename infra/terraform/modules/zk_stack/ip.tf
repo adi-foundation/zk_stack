@@ -94,10 +94,6 @@ resource "cloudflare_record" "explorer" {
   content = data.google_compute_global_address.explorer-app.address
   type    = "A"
   proxied = true
-
-  depends_on = [
-    google_compute_global_address.explorer-app
-  ]
 }
 
 resource "cloudflare_record" "explorer-api" {
@@ -106,10 +102,6 @@ resource "cloudflare_record" "explorer-api" {
   content = data.google_compute_global_address.explorer-api.address
   type    = "A"
   proxied = true
-
-  depends_on = [
-    google_compute_global_address.explorer-api
-  ]
 }
 
 resource "cloudflare_record" "portal" {
@@ -118,10 +110,6 @@ resource "cloudflare_record" "portal" {
   content = data.google_compute_global_address.portal.address
   type    = "A"
   proxied = true
-
-  depends_on = [
-    google_compute_global_address.portal
-  ]
 }
 
 resource "cloudflare_record" "rpc" {
@@ -130,10 +118,6 @@ resource "cloudflare_record" "rpc" {
   content = data.google_compute_global_address.server.address
   type    = "A"
   proxied = true
-
-  depends_on = [
-    google_compute_global_address.server
-  ]
 }
 
 resource "cloudflare_record" "grafana" {
@@ -142,10 +126,6 @@ resource "cloudflare_record" "grafana" {
   content = data.google_compute_global_address.grafana.address
   type    = "A"
   proxied = true
-
-  depends_on = [
-    google_compute_global_address.grafana
-  ]
 }
 
 resource "cloudflare_record" "en01-rpc" {
@@ -154,10 +134,6 @@ resource "cloudflare_record" "en01-rpc" {
   content = data.google_compute_global_address.external-node.address
   type    = "A"
   proxied = true
-
-  depends_on = [
-    google_compute_global_address.external-node
-  ]
 }
 
 resource "cloudflare_record" "en01-grafana" {
@@ -166,8 +142,4 @@ resource "cloudflare_record" "en01-grafana" {
   content = data.google_compute_global_address.en-grafana.address
   type    = "A"
   proxied = true
-
-  depends_on = [
-    google_compute_global_address.en-grafana
-  ]
 }
