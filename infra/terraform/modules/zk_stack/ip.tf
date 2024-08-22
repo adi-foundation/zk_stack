@@ -88,7 +88,7 @@ data "cloudflare_zone" "dns_zone" {
   name = var.cloudflare_dns_zone
 }
 
-resource "cloudflare_record" "k8s-explorer-sepolia" {
+resource "cloudflare_record" "explorer" {
   zone_id = data.cloudflare_zone.lambdaclass.id
   name    = var.explorer_sepolia_dns
   content = data.google_compute_global_address.explorer-app.address
@@ -100,7 +100,7 @@ resource "cloudflare_record" "k8s-explorer-sepolia" {
   ]
 }
 
-resource "cloudflare_record" "k8s-explorer-api-sepolia" {
+resource "cloudflare_record" "explorer-api" {
   zone_id = data.cloudflare_zone.lambdaclass.id
   name    = var.explorer_api_sepolia_dns
   content = data.google_compute_global_address.explorer-api.address
@@ -112,7 +112,7 @@ resource "cloudflare_record" "k8s-explorer-api-sepolia" {
   ]
 }
 
-resource "cloudflare_record" "k8s-portal-sepolia" {
+resource "cloudflare_record" "portal" {
   zone_id = data.cloudflare_zone.lambdaclass.id
   name    = var.portal_sepolia_dns
   content = data.google_compute_global_address.portal.address
@@ -124,7 +124,7 @@ resource "cloudflare_record" "k8s-portal-sepolia" {
   ]
 }
 
-resource "cloudflare_record" "k8s-rpc-sepolia" {
+resource "cloudflare_record" "rpc" {
   zone_id = data.cloudflare_zone.lambdaclass.id
   name    = var.rpc_sepolia_dns
   content = data.google_compute_global_address.server.address
@@ -136,7 +136,7 @@ resource "cloudflare_record" "k8s-rpc-sepolia" {
   ]
 }
 
-resource "cloudflare_record" "k8s-grafana-sepolia" {
+resource "cloudflare_record" "grafana" {
   zone_id = data.cloudflare_zone.lambdaclass.id
   name    = var.grafana_sepolia_dns
   content = data.google_compute_global_address.grafana.address
@@ -148,7 +148,7 @@ resource "cloudflare_record" "k8s-grafana-sepolia" {
   ]
 }
 
-resource "cloudflare_record" "k8s-en01-rpc-sepolia" {
+resource "cloudflare_record" "en01-rpc" {
   zone_id = data.cloudflare_zone.lambdaclass.id
   name    = var.external_node_sepolia_dns
   content = data.google_compute_global_address.external-node.address
@@ -160,7 +160,7 @@ resource "cloudflare_record" "k8s-en01-rpc-sepolia" {
   ]
 }
 
-resource "cloudflare_record" "k8s-en01-grafana-sepolia" {
+resource "cloudflare_record" "en01-grafana" {
   zone_id = data.cloudflare_zone.lambdaclass.id
   name    = var.external_node_grafana_sepolia_dns
   content = data.google_compute_global_address.en-grafana.address
