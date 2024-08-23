@@ -22,6 +22,10 @@ terraform {
       source = "gavinbunney/kubectl"
       version = "1.14.0"
     }
+    cloudflare = {
+      source  = "cloudflare/cloudflare"
+      version = "~> 4.0"
+    }
   }
 }
 
@@ -37,6 +41,10 @@ provider "helm" {
      token                  = data.google_client_config.default.access_token
      cluster_ca_certificate = base64decode(module.zk-stack-gke-cluster.ca_certificate)
   }
+}
+
+provider "cloudflare" {
+  api_token = var.cloudflare_api_token
 }
 
 data "google_client_config" "default" {}

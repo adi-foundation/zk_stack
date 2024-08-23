@@ -50,10 +50,6 @@ variable "gpu_nodes_disk_size" {
   default = 100
 }
 
-variable "aws_dns_zone" {
-  type = string
-}
-
 variable "explorer_sepolia_dns" {
   type = string
 }
@@ -102,10 +98,18 @@ variable "grafana_public_ip_name" {
   type = string
 }
 
+variable "cloudflare_dns_zone" {
+  type = string
+}
+
 variable "external_node_public_ip_name" {
   type = string
 }
 
 variable "external_node_grafana_public_ip_name" {
+  type = string
+}
+
+variable "cloudflare_api_token" {
   type = string
 }

@@ -120,9 +120,14 @@ variable "en_grafana_ip_name" {
   description = "Name for the GCP Global IP for the external node's grafana"
 }
 
-variable "aws_dns_zone" {
+variable "cloudflare_api_token" {
   type        = string
-  description = "AWS Hosted Zone name to host all the DNSs, i.e.: \"example.com\""
+  description = "Cloudflare API token for the zone you will use for DNS records: https://developers.cloudflare.com/fundamentals/api/get-started/create-token/"
+}
+
+variable "cloudflare_dns_zone" {
+  type        = string
+  description = "Cloudflare DNS zone where to create DNS records. For example: `example.com`"
 }
 
 variable "explorer_sepolia_dns" {

@@ -1,5 +1,5 @@
 output "explorer-app-dns" {
-  value = aws_route53_record.k8s-explorer-sepolia.name
+  value = "${cloudflare_record.k8s-explorer-sepolia.name}.${var.cloudflare_dns_zone}"
 }
 
 output "command-for-k8s-credentials" {
