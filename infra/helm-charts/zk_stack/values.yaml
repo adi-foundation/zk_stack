@@ -1,0 +1,70 @@
+# Default values for zk_stack.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+namespace: default
+services:
+  explorer-app:
+      type: NodePort
+      ports:
+        - name: http
+          port: 3010
+  explorer-api:
+      type: NodePort
+      ports:
+        - name: http
+          port: 3020
+  explorer-data-fetcher:
+      type: NodePort
+      ports:
+        - name: http
+          port: 3040
+  external-node:
+      type: NodePort
+      ports:
+        - name: en-http
+          port: 3050
+        - name: en-healthcheck
+          port: 3071
+        - name: en-prometheus
+          port: 3312
+  portal:
+      type: NodePort
+      ports:
+        - name: http
+          port: 3000
+  server:
+      type: NodePort
+      ports:
+        - name: server-rpc
+          port: 3050
+        - name: server-proof-generation
+          port: 3320
+        - name: server-readiness
+          port: 3071
+        - name: server-prometheus-listener
+          port: 3312
+  grafana:
+      type: NodePort
+      ports:
+        - name: grafana
+          port: 3000
+  prometheus:
+      type: NodePort
+      ports:
+        - name: prometheus
+          port: 9090
+  pushgateway:
+      type: NodePort
+      ports:
+        - name: pushgateway
+          port: 9091
+  nodeexporter:
+      type: NodePort
+      ports:
+        - name: nodeexporter
+          port: 9091
+  alertmanager:
+      type: NodePort
+      ports:
+        - name: alertmanager
+          port: 9093
