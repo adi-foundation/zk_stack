@@ -1,10 +1,10 @@
-module "zk-stack-stack-gke-cluster" {
+module "zk-stack-gke-cluster" {
   source                     = "terraform-google-modules/kubernetes-engine/google//modules/beta-public-cluster"
   version                    = "31.1.0"
   project_id                 = var.project_id
   name                       = var.cluster_name
   region                     = var.region
-  zones                      = ["${var.region}-a", "${var.region}-b", "${var.region}-c"]
+  zones                      = var.cluster_locations
   release_channel            = "STABLE"
 
   # Network config

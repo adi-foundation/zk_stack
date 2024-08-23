@@ -24,7 +24,7 @@
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_zk-stack-stack-gke-cluster"></a> [zk-stack-stack-gke-cluster](#module\_zk-stack-stack-gke-cluster) | terraform-google-modules/kubernetes-engine/google//modules/beta-public-cluster | 31.1.0 |
+| <a name="module_zk-stack-gke-cluster"></a> [zk-stack-gke-cluster](#module\_zk-stack-gke-cluster) | terraform-google-modules/kubernetes-engine/google//modules/beta-public-cluster | 31.1.0 |
 
 ## Resources
 

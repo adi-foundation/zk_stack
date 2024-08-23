@@ -9,6 +9,6 @@ resource "google_kms_crypto_key" "k8s-secrets-encryption-key" {
   rotation_period = "7776000s"
 
   lifecycle {
-    prevent_destroy = true
+    prevent_destroy = var.encryption_key_prevent_destroy
   }
 }

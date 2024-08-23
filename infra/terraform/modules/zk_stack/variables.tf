@@ -13,6 +13,11 @@ variable "project_id" {
   description = "ID of the GCP Project to deploy all the infrastructure"
 }
 
+variable "cluster_locations" {
+  type        = list
+  description = "List of GCP zones (inside the region you specified) where the cluster will be"
+}
+
 variable "cpu_machine_type" {
   type        = string
   default     = "c3-highmem-22"
@@ -183,4 +188,54 @@ variable "prover_setup_data_bucket_name" {
   type        = string
   default     = "prover-setup-data"
   description = "GCS Bucket name for the prover setup data bucket"
+}
+
+variable "db_size" {
+  type        = string
+  default     = "db-custom-4-15360"
+  description = "Cloud SQL General DB size/type"
+}
+
+variable "db_disk_size_gb" {
+  type        = string
+  default     = "100"
+  description = "Cloud SQL General DB disk size in GiB"
+}
+
+variable "sql_user" {
+  type        = string
+  description = "Cloud SQL General DB username"
+}
+
+variable "sql_password" {
+  type        = string
+  description = "Cloud SQL General DB password"
+}
+
+variable "prover_db_size" {
+  type        = string
+  default     = "db-custom-4-15360"
+  description = "Cloud SQL Prover DB size/type"
+}
+
+variable "prover_db_disk_size_gb" {
+  type        = string
+  default     = "100"
+  description = "Cloud SQL Prover DB disk size in GiB"
+}
+
+variable "prover_sql_user" {
+  type        = string
+  description = "Cloud SQL Prover DB username"
+}
+
+variable "prover_sql_password" {
+  type        = string
+  description = "Cloud SQL Prover DB password"
+}
+
+variable "encryption_key_prevent_destroy" {
+  type        = bool
+  default     = true
+  description = "Whether to prevent destroying the GCP KMS decrpytion key for Kubernetes data"
 }
