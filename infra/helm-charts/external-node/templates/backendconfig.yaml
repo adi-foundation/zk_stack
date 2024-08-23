@@ -1,0 +1,13 @@
+{{- range .Values.nodename }}
+apiVersion: cloud.google.com/v1
+kind: BackendConfig
+metadata:
+  name: {{.}}-hc-config
+spec:
+  healthCheck:
+    checkIntervalSec: 15
+    port: 3071
+    type: HTTP
+    requestPath: /health
+---
+{{- end }}

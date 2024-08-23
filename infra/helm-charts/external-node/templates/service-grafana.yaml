@@ -1,0 +1,62 @@
+{{- range .Values.nodename }}
+apiVersion: v1
+kind: ServiceList
+items:
+  - metadata:
+      name: {{.}}-grafana
+      namespace: {{$.Values.namespace}}
+      labels:
+        app: {{.}}-grafana
+    spec:
+      type: NodePort
+      ports:
+        - name: {{.}}-grafana
+          port: 3000
+          targetPort: 3000
+          protocol: TCP
+      selector:
+        app: {{.}}-grafana
+  - metadata:
+      name: {{.}}-prometheus
+      namespace: {{$.Values.namespace}}
+      labels:
+        app: {{.}}-prometheus
+    spec:
+      type: NodePort
+      ports:
+        - name: {{.}}-prometheus
+          port: 9090
+          targetPort: 9090
+          protocol: TCP
+      selector:
+        app: {{.}}-grafana
+  - metadata:
+      name: {{.}}-pushgateway
+      namespace: {{$.Values.namespace}}
+      labels:
+        app: {{.}}-prometheus
+    spec:
+      type: NodePort
+      ports:
+        - name: {{.}}-pushgateway
+          port: 9091
+          targetPort: 9091
+          protocol: TCP
+      selector:
+        app: {{.}}-grafana
+  - metadata:
+      name: {{.}}-nodeexporter
+      namespace: {{$.Values.namespace}}
+      labels:
+        app: {{.}}-prometheus
+    spec:
+      type: NodePort
+      ports:
+        - name: {{.}}-nodeexporter
+          port: 9100
+          targetPort: 9100
+          protocol: TCP
+      selector:
+        app: {{.}}-grafana
+---
+{{- end }}
