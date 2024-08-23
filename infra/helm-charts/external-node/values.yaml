@@ -9,7 +9,7 @@ deployment:
     EN_L1_CHAIN_ID: "11155111"
     EN_MAIN_NODE_URL: https://k8s.rpc.sepolia.zk-stack.lambdaclass.com
     EN_L2_CHAIN_ID: "270"
-    DATABASE_URL: postgres://lambda:ferret_red_ant_crazy_emerald@35.185.58.156:5432
+    DATABASE_URL: postgres://lambda:ferret_red_ant_crazy_emerald@10.56.112.6:5432
     EN_SNAPSHOTS_OBJECT_STORE_BUCKET_BASE_URL: "snapshots-object-store-dev"
 terraform:
   grafana:
