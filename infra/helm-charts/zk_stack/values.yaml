@@ -68,3 +68,32 @@ services:
       ports:
         - name: alertmanager
           port: 9093
+ingresses:
+  explorer-app:
+    dns: k8s.explorer.sepolia.zk-stack.lambdaclass.com
+    gcp_global_ip_name: explorer-app-ip
+    port: 3010
+  explorer-api:
+    dns: k8s.explorer.api.sepolia.zk-stack.lambdaclass.com
+    gcp_global_ip_name: explorer-api-ip
+    port: 3020
+  external-node:
+    dns: k8s.en01.rpc.sepolia.zk-stack.lambdaclass.com
+    gcp_global_ip_name: external-node-ip
+    port: 3050
+  grafana:
+    dns: k8s.grafana.sepolia.zk-stack.lambdaclass.com
+    gcp_global_ip_name: grafana-ip
+    port: 3050
+  portal:
+    dns: k8s.portal.sepolia.zk-stack.lambdaclass.com
+    gcp_global_ip_name: portal-ip
+    port: 3000
+  server:
+    dns: k8s.rpc.sepolia.zk-stack.lambdaclass.com
+    gcp_global_ip_name: server-ip
+    port: 3050
+  en01-grafana:
+    dns: k8s.en01.grafana.sepolia.zk-stack.lambdaclass.com
+    gcp_global_ip_name: en01-grafana-ip
+    port: 3000
