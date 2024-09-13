@@ -32,7 +32,7 @@ variable "cpu_nodes_per_zone" {
 
 variable "gpu_nodes_locations" {
   type    = string
-  default = "us-central1-c"
+  default = "us-central1-b"
 }
 
 variable "gpu_nodes_per_zone" {
