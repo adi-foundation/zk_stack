@@ -32,7 +32,7 @@ resource "cloudflare_record" "k8s-rpc-sepolia" {
   name    = var.rpc_sepolia_dns
   content = data.google_compute_global_address.server.address
   type    = "A"
-  proxied = true
+  proxied = false
 }
 
 resource "cloudflare_record" "k8s-grafana-sepolia" {
@@ -48,7 +48,7 @@ resource "cloudflare_record" "k8s-en01-rpc-sepolia" {
   name    = var.external_node_sepolia_dns
   content = data.google_compute_global_address.external-node.address
   type    = "A"
-  proxied = true
+  proxied = false
 }
 
 resource "cloudflare_record" "k8s-en01-grafana-sepolia" {
@@ -75,6 +75,6 @@ resource "cloudflare_ruleset" "rpc-rate-limit" {
       mitigation_timeout = 60
     }
     expression = "(http.host eq \"${var.rpc_sepolia_dns}.${var.cloudflare_dns_zone}\")"
-    enabled = true
+    enabled    = false
   }
 }
