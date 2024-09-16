@@ -48,10 +48,36 @@ module "gke" {
       initial_node_count          = var.cpu_nodes_per_zone
       accelerator_count           = 0
     },
+    #{
+    #  name                        = "gpu-node-pool-x2"
+    #  machine_type                = var.gpu_machine_type
+    #  node_locations              = var.gpu_nodes_locations
+    #  node_count                  = var.gpu_nodes_per_zone
+    #  min_count                   = var.gpu_nodes_per_zone
+    #  max_count                   = var.gpu_nodes_per_zone
+    #  local_ssd_count             = 0
+    #  spot                        = false
+    #  disk_size_gb                = 100
+    #  disk_type                   = "pd-ssd"
+    #  image_type                  = "COS_CONTAINERD"
+    #  enable_gcfs                 = false
+    #  enable_gvnic                = false
+    #  logging_variant             = "DEFAULT"
+    #  auto_repair                 = true
+    #  auto_upgrade                = true
+    #  preemptible                 = false
+    #  initial_node_count          = var.gpu_nodes_per_zone
+
+    #  # GPU config
+    #  accelerator_count          = 2
+    #  accelerator_type           = "nvidia-l4"
+    #  # GPU drivers automatic installation config
+    #  gpu_driver_version         = "DEFAULT"
+    #},
     {
-      name                        = "gpu-node-pool"
-      machine_type                = var.gpu_machine_type
-      node_locations              = var.gpu_nodes_locations
+      name                        = "gpu-node-pool-x4-gpuz"
+      machine_type                = "g2-standard-48"
+      node_locations              = "us-central1-c"
       node_count                  = var.gpu_nodes_per_zone
       min_count                   = var.gpu_nodes_per_zone
       max_count                   = var.gpu_nodes_per_zone
@@ -69,7 +95,7 @@ module "gke" {
       initial_node_count          = var.gpu_nodes_per_zone
 
       # GPU config
-      accelerator_count          = 2
+      accelerator_count          = 4
       accelerator_type           = "nvidia-l4"
       # GPU drivers automatic installation config
       gpu_driver_version         = "DEFAULT"
@@ -94,6 +120,10 @@ module "gke" {
     gpu-node-pool = {
       gpu-node-pool = true
     }
+
+    gpu-node-pool-x4-gpuz = {
+      gpu-node-pool = true
+    }
   }
 
   node_pools_metadata = {
@@ -104,6 +134,10 @@ module "gke" {
     }
 
     gpu-node-pool = {
+      gpu-node-pool = true
+    }
+
+    gpu-node-pool-x4-gpuz = {
       gpu-node-pool = true
     }
   }
@@ -131,6 +165,19 @@ module "gke" {
         effect = "NO_SCHEDULE"
       },
     ]
+
+    gpu-node-pool-x4-gpuz = [
+      {
+        key    = "gpu-node-pool"
+        value  = true
+        effect = "PREFER_NO_SCHEDULE"
+      },
+      {
+        key    = "nvidia.com/gpu"
+        value  = "present"
+        effect = "NO_SCHEDULE"
+      },
+    ]
   }
 
   node_pools_tags = {
@@ -141,6 +188,10 @@ module "gke" {
     ]
 
     gpu-node-pool = [
+      "gpu-node-pool",
+    ]
+
+    gpu-node-pool-x4-gpuz = [
       "gpu-node-pool",
     ]
   }
