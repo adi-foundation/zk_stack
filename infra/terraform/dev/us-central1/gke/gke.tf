@@ -50,7 +50,7 @@ module "gke" {
       accelerator_count           = 0
     },
     #{
-    #  name                        = "gpu-node-pool-x2"
+    #  name                        = "gpu-node-pool-x2-gpus"
     #  machine_type                = var.gpu_machine_type
     #  node_locations              = var.gpu_nodes_locations
     #  node_count                  = var.gpu_nodes_per_zone
