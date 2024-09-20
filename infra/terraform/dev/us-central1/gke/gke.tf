@@ -75,32 +75,32 @@ module "gke" {
     #  # GPU drivers automatic installation config
     #  gpu_driver_version         = "DEFAULT"
     #},
-    {
-      name                        = "gpu-node-pool-x4-gpuz"
-      machine_type                = "g2-standard-48"
-      node_locations              = "us-central1-c"
-      node_count                  = var.gpu_nodes_per_zone
-      min_count                   = var.gpu_nodes_per_zone
-      max_count                   = var.gpu_nodes_per_zone
-      local_ssd_count             = 0
-      spot                        = false
-      disk_size_gb                = 100
-      disk_type                   = "pd-ssd"
-      image_type                  = "COS_CONTAINERD"
-      enable_gcfs                 = false
-      enable_gvnic                = false
-      logging_variant             = "DEFAULT"
-      auto_repair                 = true
-      auto_upgrade                = true
-      preemptible                 = false
-      initial_node_count          = var.gpu_nodes_per_zone
+    #{
+    #  name                        = "gpu-node-pool-x4-gpuz"
+    #  machine_type                = "g2-standard-48"
+    #  node_locations              = "us-central1-c"
+    #  node_count                  = var.gpu_nodes_per_zone
+    #  min_count                   = var.gpu_nodes_per_zone
+    #  max_count                   = var.gpu_nodes_per_zone
+    #  local_ssd_count             = 0
+    #  spot                        = false
+    #  disk_size_gb                = 100
+    #  disk_type                   = "pd-ssd"
+    #  image_type                  = "COS_CONTAINERD"
+    #  enable_gcfs                 = false
+    #  enable_gvnic                = false
+    #  logging_variant             = "DEFAULT"
+    #  auto_repair                 = true
+    #  auto_upgrade                = true
+    #  preemptible                 = false
+    #  initial_node_count          = var.gpu_nodes_per_zone
 
-      # GPU config
-      accelerator_count          = 4
-      accelerator_type           = "nvidia-l4"
-      # GPU drivers automatic installation config
-      gpu_driver_version         = "DEFAULT"
-    },
+    #  # GPU config
+    #  accelerator_count          = 4
+    #  accelerator_type           = "nvidia-l4"
+    #  # GPU drivers automatic installation config
+    #  gpu_driver_version         = "DEFAULT"
+    #},
   ]
 
   node_pools_oauth_scopes = {
