@@ -6,6 +6,7 @@ module "gke" {
   region                     = var.region
   zones                      = ["${var.region}-a", "${var.region}-b", "${var.region}-c"]
   release_channel            = "STABLE"
+  kubernetes_version         = "1.30.2-gke.1587003"
 
   # Network config
   network           = "default"
