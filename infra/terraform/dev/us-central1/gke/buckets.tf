@@ -6,6 +6,8 @@ resource "google_storage_bucket" "object-store-dev" {
   uniform_bucket_level_access = true
 
   public_access_prevention = "enforced"
+  # Allow Terraform to delete all objects in the bucket
+  force_destroy = true
 }
 
 resource "google_storage_bucket" "public-object-store-dev" {
@@ -13,6 +15,8 @@ resource "google_storage_bucket" "public-object-store-dev" {
   location      = "US-CENTRAL1"
 
   uniform_bucket_level_access = true
+  # Allow Terraform to delete all objects in the bucket
+  force_destroy = true
 }
 
 resource "google_storage_bucket" "prover-object-store-dev" {
@@ -22,6 +26,8 @@ resource "google_storage_bucket" "prover-object-store-dev" {
   uniform_bucket_level_access = true
 
   public_access_prevention = "enforced"
+  # Allow Terraform to delete all objects in the bucket
+  force_destroy = true
 }
 
 resource "google_storage_bucket" "snapshots-object-store-dev" {
@@ -29,6 +35,8 @@ resource "google_storage_bucket" "snapshots-object-store-dev" {
   location      = "US-CENTRAL1"
 
   uniform_bucket_level_access = true
+  # Allow Terraform to delete all objects in the bucket
+  force_destroy = true
 }
 
 resource "google_storage_bucket" "prover-setup-data" {
@@ -36,6 +44,8 @@ resource "google_storage_bucket" "prover-setup-data" {
   location      = "US-CENTRAL1"
 
   uniform_bucket_level_access = true
+  # Allow Terraform to delete all objects in the bucket
+  force_destroy = true
 }
 
 # Public read access

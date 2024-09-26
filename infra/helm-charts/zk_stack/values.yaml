@@ -1,0 +1,138 @@
+# Default values for zk_stack.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+namespace: default
+explorer-app:
+  http-port: &explorer-app-http-port 3010
+explorer-api:
+  http-port: &explorer-api-http-port 3020
+explorer-data-fetcher:
+  http-port: &explorer-data-fetcher-http-port 3040
+explorer-data-fetcher:
+  http-port: &explorer-data-fetcher-http-port 3040
+external-node:
+  http-port: &external-node-http-port 3050
+portal:
+  http-port: &portal-http-port 3000
+server:
+  http-port: &server-http-port 3050
+grafana:
+  http-port: &grafana-http-port 3000
+healthCheck:
+  port: &healthcheck-port 3071
+  checkIntervalSec: 15
+services:
+  explorer-app:
+      type: NodePort
+      ports:
+        - name: http
+          port: *explorer-app-http-port
+  explorer-api:
+      type: NodePort
+      ports:
+        - name: http
+          port: *explorer-api-http-port
+  explorer-data-fetcher:
+      type: ClusterIP
+      ports:
+        - name: http
+          port: *explorer-data-fetcher-http-port
+  external-node:
+      type: NodePort
+      ports:
+        - name: en-http
+          port: *external-node-http-port
+        - name: en-healthcheck
+          port: *healthcheck-port
+        - name: en-prometheu0
+          port: 3312
+  portal:
+      type: NodePort
+      ports:
+        - name: http
+          port: *portal-http-port
+  server:
+      type: NodePort
+      ports:
+        - name: server-rpc
+          port: *server-http-port
+        - name: server-proof-generation
+          port: 3320
+        - name: server-readiness
+          port: *healthcheck-port
+        - name: server-prometheus-listener
+          port: 3312
+  grafana:
+      type: NodePort
+      ports:
+        - name: grafana
+          port: *grafana-http-port
+  prometheus:
+      type: NodePort
+      ports:
+        - name: prometheus
+          port: 9090
+  pushgateway:
+      type: NodePort
+      ports:
+        - name: pushgateway
+          port: 9091
+  nodeexporter:
+      type: NodePort
+      ports:
+        - name: nodeexporter
+          port: 9091
+  alertmanager:
+      type: NodePort
+      ports:
+        - name: alertmanager
+          port: 9093
+  en01-grafana:
+      type: NodePort
+      ports:
+        - name: en01-grafana
+          port: *grafana-http-port
+  en01-prometheus:
+      type: NodePort
+      ports:
+        - name: en01-prometheus
+          port: 9090
+  en01-pushgateway:
+      type: NodePort
+      ports:
+        - name: en01-pushgateway
+          port: 9091
+  en01-nodeexporter:
+      type: NodePort
+      ports:
+        - name: en01-nodeexporter
+          port: 9100
+ingresses:
+  explorer-app:
+    dns: k8s.explorer.sepolia.zk-stack.lambdaclass.com
+    gcp_global_ip_name: explorer-app-ip
+    port: *explorer-app-http-port
+  explorer-api:
+    dns: k8s.explorer.api.sepolia.zk-stack.lambdaclass.com
+    gcp_global_ip_name: explorer-api-ip
+    port: *explorer-api-http-port
+  external-node:
+    dns: k8s.en01.rpc.sepolia.zk-stack.lambdaclass.com
+    gcp_global_ip_name: external-node-ip
+    port: *external-node-http-port
+  portal:
+    dns: k8s.portal.sepolia.zk-stack.lambdaclass.com
+    gcp_global_ip_name: portal-ip
+    port: *portal-http-port
+  server:
+    dns: k8s.rpc.sepolia.zk-stack.lambdaclass.com
+    gcp_global_ip_name: server-ip
+    port: *server-http-port
+  grafana:
+    dns: k8s.grafana.sepolia.zk-stack.lambdaclass.com
+    gcp_global_ip_name: grafana-ip
+    port: *grafana-http-port
+  en01-grafana:
+    dns: k8s.en01.grafana.sepolia.zk-stack.lambdaclass.com
+    gcp_global_ip_name: en01-grafana-ip
+    port: *grafana-http-port
