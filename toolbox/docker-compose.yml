@@ -1,0 +1,10 @@
+version: '3.8'
+
+services:
+  zksync-ecosystem:
+    build: .
+    volumes:
+      - ./custom-wallets.yaml:/root/custom-wallets.yaml
+    environment:
+      - RUST_LOG=info
+    restart: unless-stopped

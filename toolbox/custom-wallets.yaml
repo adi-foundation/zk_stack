@@ -1,0 +1,15 @@
+deployer:
+  address: ''
+  private_key: ''
+operator:
+  address: ''
+  private_key: ''
+blob_operator:
+  address: ''
+  private_key: ''
+fee_account:
+  address: ''
+  private_key: ''
+governor:
+  address: ''
+  private_key: ''
