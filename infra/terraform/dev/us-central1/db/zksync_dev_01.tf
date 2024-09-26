@@ -2,6 +2,7 @@ resource "google_sql_database_instance" "zksync_dev_01" {
   name             = "zksync-dev-01"
   database_version = "POSTGRES_14"
   region           = "us-east1"
+  deletion_protection = false
 
   settings {
     tier              = "db-custom-4-15360"

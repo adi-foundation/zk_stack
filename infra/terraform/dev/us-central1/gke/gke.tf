@@ -1,4 +1,5 @@
 module "gke" {
+  deletion_protection = false
   source                     = "terraform-google-modules/kubernetes-engine/google//modules/beta-public-cluster"
   version                    = "31.1.0"
   project_id                 = var.project_id
